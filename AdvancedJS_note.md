@@ -168,7 +168,76 @@ setTimeout(function() {
 
 ```
 
+
+
+## 4. for in 和for of 和object.keys()用法总结
+
+for in 循环输出的是key，for of循环输出的是value
+
+for of 不能循环普通对象，需要Object.keys()来搭配使用
+
+```js
+
+var obj = {
+  name : 'why',
+  age : 18,
+
+}
+
+var arr = [1, 2, 3, 4];
+
+//for in 用来循环对象 获取对象的键名
+for (let key in obj){
+  console.log(key);
+}
+//name 
+//age
+
+
+//for of 用来循环数组得到数组元素
+for (let key of arr){
+  console.log(key);
+}
+//1
+//2
+//3
+//4
+
+
+//Object.keys() 方法会返回一个对象自身可枚举的键名（属性名）的数组集合
+var test = Object.keys(obj);
+console.log(test);
+//['name', 'age']
+
+
+
+
+var obj = {
+  name : 'why',
+  age : 18,
+  hobbies : {
+    hobby1 : 'sing',
+    hobby2 : 'dance'
+  }
+}
+
+for( let key of Object.keys(obj)){
+  console.log(key + " : " + obj[key]);
+}
+//name : why
+//age : 18
+//hobbies : [object Object]
+
+```
+
+
+
+使用for in会遍历数组所有的可枚举属性，原型，方法，for of则不会，只会遍历的只是数组内的元素。
+
+
+
 # 1. 基础总结深入
+
 ## 1.1 数据类型
 ### 1.1.1 基本（值）类型
 
@@ -3559,7 +3628,7 @@ console.log(obj.height)
 
 
 
-n属性描述符的类型有两种：
+属性描述符的类型有两种：
 
 1. 数据属性（Data Properties）描述符（Descriptor）；
 2. 存取属性（Accessor访问器 Properties）描述符（Descriptor）；
@@ -3740,7 +3809,7 @@ console.log(obj)
 
 ```
 
-## 5.7 获取属性描述符
+## 5.7 获取属性描述符Object.getOwnPropertyDescriptor
 
 ```js
 var obj = {
@@ -6094,4 +6163,798 @@ calcArea(c)
 
 export {}
 ```
+
+```js
+// 多态: 当对不同的数据类型执行同一个操作时, 如果表现出来的行为(形态)不一样, 那么就是多态的体现.
+function calcArea(foo) {
+  console.log(foo.getArea())
+}
+
+var obj1 = {
+  name: "why",
+  getArea: function() {
+    return 1000
+  }
+}
+
+class Person {
+  getArea() {
+    return 100
+  }
+}
+
+var p = new Person()
+
+calcArea(obj1)
+calcArea(p)
+
+
+// 也是多态的体现
+function sum(m, n) {
+  return m + n
+}
+
+sum(20, 30)
+sum("abc", "cba")
+
+```
+
+
+
+# 9.ES6知识点
+
+
+
+## 9.1 **字面量的增强的写法**
+
+ES6中对 **对象字面量** 进行了增强，称之为 Enhanced object literals（增强对象字面量）。
+
+字面量的增强主要包括下面几部分：
+
+1. 属性的简写：**Property Shorthand**
+
+2. 方法的简写：**Method Shorthand**
+
+3. 计算属性名：**Computed Property Names**
+
+### 1.属性的简写
+
+**E56对象字面量**
+
+```js
+  var name = "why";
+  var age = 18;
+  //ES5对象字面量
+  var obj = {
+    name : name,
+    age : age,
+  }
+```
+
+**ES6对象字面量**
+在ES6中如果你的对象属性名（键名）和当然作用域中的变量名相同，ES6的对象会自动的帮你完成键值的赋值。
+
+```js
+  var name = "why";
+  var age = 18;
+  var obj = {
+    name,
+    age,
+  }
+  console.log(obj);
+  //Object age: 18 name: "why"
+```
+
+### 2.方法的简写
+
+**ES5对象方法**
+
+必须要在写上对象键名后写上function关键字
+
+```js
+  var name = "why";
+  var age = 18;
+  var obj = {
+    name : name,
+    age : age,
+    foo: function(){
+      console.log(this);
+    }
+  }
+```
+
+**ES6对象方法**
+
+只需要方法名和圆括号再跟上花括号即可。
+
+```js
+  var name = "why";
+  var age = 18;
+  var obj = {
+    name,
+    age,
+    foo(){
+      console.log(this);
+    }
+  }
+```
+
+### 3.计算属性名
+
+在ES5之前，如果属性名是个变量或者需要动态计算，则只能通过 对象.[变量名] 的方式去访问。
+
+```js
+var p = {
+        name : '李四',
+        age : 20
+    }
+    var attName = 'name';
+    console.log(p[attName]) //李四
+    var attHeight = 'Height';
+    p[attHeight] = 1.88;
+    console.log(p);//{name: '李四', age: 20, Height: 1.88}
+
+
+var attName = 'name';
+    var p = {
+        attName : '李四',  // 这里的attName是属性名，相当于各级p定义了属性名叫 attName的属性。
+        age : 20
+    }
+    console.log(p[attName])  // undefined
+    console.log(p.attName)//'李四'
+```
+
+在ES6中，把属性名用[ ]括起来，则括号中就可以引用提前定义的变量。
+
+```js
+var attName = 'name';
+    var p = {
+        [attName] : '李四',  // 引用了变量attName。相当于添加了一个属性名为name的属性
+        age : 20
+    }
+    console.log(p[attName])  // 李四
+```
+
+## 9.2 解构
+
+ES6 允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构（Destructuring）
+
+我们可以划分为：数组的解构和对象的解构。
+
+数组的解构：
+
+1. 基本解构过程
+2. 顺序解构
+3.  解构出数组
+4. 默认值
+
+对象的解构：
+
+1. 基本解构过程
+2.  任意顺序
+3. 重命名
+4. 默认值
+
+### 1 数组的解构
+
+以前，为变量赋值，只能直接指定值。
+
+```js
+var names = ['abc', 'cba', 'nba'];
+//var item1 = name[0];
+//var item2 = name[1];
+//var item3 = name[2];
+```
+
+es6可以从数组中提取值，按照对应位置，对变量赋值。
+
+```js
+// 对数组的解构: []
+var [item1, item2, item3] = names
+console.log(item1, item2, item3);//abc cba nba
+
+// 解构后面的元素
+var [, , itemz] = names
+console.log(itemz)//nba
+
+// 解构出一个元素,后面的元素放到一个新数组中
+var [itemx, ...newNames] = names
+console.log(itemx, newNames)
+//abc (2) ['cba', 'nba']
+
+// 解构的默认值
+//var [itema, itemb, itemc, itemd ] = names
+//console.log(itemd)//undefined
+//当一个数组成员严格等于undefined，默认值才会生效。
+var [itema, itemb, itemc, itemd = "aaa"] = names
+console.log(itemd)//aaa
+```
+
+### 2.对象的解构
+
+```js
+var obj = {
+  name : 'why',
+  age: 18,
+  height: 1.88
+}
+// 对象的解构: {}
+var { name, age, height } = obj;
+console.log(name, age, height);//why 18 1.88
+console.log(age, name, height);//18 'why' 1.88
+
+var { age } = obj
+console.log(age) //18
+/* 
+对象的解构与数组有一个重要的不同。数组的元素是按次序排列的，变量的取值由它的位置决定；
+而对象的属性没有次序，变量必须与属性同名，才能取到正确的值。
+*/
+
+//对解构出的变量重新命名
+var { name: newName } = obj
+console.log(newName)//why
+
+//默认值
+//var { address } = obj
+//console.log(address)
+//没有address这个属性，因此结构出来时undefined
+//undefined的情况下，可以设置默认值
+
+//var { address= "广州市" } = obj
+//console.log(address)//"广州市"
+//console.log(obj);//{name: 'why', age: 18, height: 1.88}
+//或者解构一个新的属性并且重新命名
+
+var { address: newAddress = "广州市" } = obj
+console.log(newAddress)//"广州市"
+```
+
+对函数的解构
+
+解构目前在开发中使用是非常多的：
+
+比如在开发中拿到一个变量时，自动对其进行解构使用；
+
+比如对函数的参数进行解构；
+
+```js
+var obj = {
+  name : 'why',
+  age: 18,
+}
+//函数的解构，一般时候我们直接拿到info
+function foo(info) {
+  console.log(info.name, info.age)
+}
+
+foo(obj)//why 18
+
+//直接解构info，使用变量
+function bar({name, age}) {
+  console.log(name, age)
+}
+
+bar(obj)//why 18
+```
+
+
+
+## 9.3 **let/const基本使用**（var和let/const区别1）
+
+注意事项一: const本质上是传递的值不可以修改
+
+ 注意事项二: 通过let/const定义的变量名是不可以重复定义（var可以重复定义）
+
+```js
+//var let 的基本使用都是一样的：声明变量
+// var foo = "foo"
+// let bar = "bar"
+
+// const constant(常量/衡量)
+// const name = "abc"
+// name = "cba"  会报错，不能再次赋值
+
+// 注意事项一: const本质上是传递的值不可以修改
+// 但是如果传递的是一个引用类型(内存地址), 可以通过引用找到对应的对象, 去修改对象内部的属性, 这个是可以的
+// const obj = {
+//   foo: "foo"
+// }
+
+// // obj = {} 重新赋予obj新的地址的话会报错
+// obj.foo = "aaa" //这样子修改里面的属性(方法)的话不会报错
+// console.log(obj.foo)
+
+
+// 注意事项二: 通过let/const定义的变量名是不可以重复定义（var可以重复定义）
+/*  var foo = "abc"
+ var foo = "cba"
+console.log(foo);//cba */
+
+let foo = "abc"
+// SyntaxError: Identifier 'foo' has already been declared
+//let foo = "cba"
+
+console.log(foo)//abc
+```
+
+
+
+## 9.4 **let/const作用域提升**（var和let/const区别2）
+
+
+
+![alt](img/70.png)
+
+
+
+```js
+
+// console.log(foo) //undefined
+// var foo = "foo"
+
+// Reference(引用)Error: Cannot access 'foo' before initialization(初始化)
+// let/const他们是没有作用域提升
+// foo被创建出来了, 但是不能被访问
+// 作用域提升: 能提前被访问
+console.log(foo) //报错
+let foo = "foo"
+
+```
+
+代码执行：执行上下文，包括词法环境和环境变量（VE）。
+
+当词法环境创建的时候，这个变量也已经被创建了
+
+![alt](img/71.png)
+
+在执行上下文被创建阶段let，const会被创建出来
+
+## 9.5 **Window对象添加属性**（var和let/const区别3）
+
+![alt](img/72.png)
+
+```js
+// var foo = "foo"
+// var message = "Hello World"
+
+// console.log(window.foo)
+// console.log(window.message)
+
+// window.message = "哈哈哈"
+// console.log(message)//"哈哈哈"
+
+let foo = "foo"
+console.log(window.foo);//undefined
+```
+
+以前VO，现在VE
+
+![alt](img/73.png)
+
+每一个执行上下文会关联一个环境变量VE，VE也会关联在一个对象上面，这个对象记录着我们代码里面声明的变量，代码里面有foo，这个对象里面也有foo，message也有。但是，但是和之前的实现不一样。
+
+ECMA时规范，每个浏览器按照规范实现功能，规范要求实现VE，但是V8引擎要实现，JScore要实现，但是不一定我一定要创造一个对象叫做VE，只要实现要有的功能就可以了。你保存在VE里面，我保存在VO里面。
+
+关联到window时另外一种状态的实现。
+
+
+
+这个对象其实叫variable_,是一个**VariableMap**类型。
+
+早期没有let，const，我就实现一个GO，而且window也需要go里面的东西，所以GO和window指向的是同一个对象
+
+以前是类似以上的实现的，但是最新的规范里面名称变调了，并且有let和const存在，所以现在放到variable_对象里面，
+
+![alt](img/74.png)
+
+window 不属于v8，window是由包含v8的浏览器实现的。早期的话，window和go指向同一个，但是现在由let，
+
+const，现在window就变成独立实现的了，指向的就不是同一个了。意味着，window里面有自己的一些东西，data，
+
+Number什么的，这些是在浏览器里面实现的，同时，当童工var声明bar，我们依然会往window里面声明一个bar，
+
+为了兼容以前的旧代码，这个是不应该出现的。如果通过window来修改了这个变量，在variable_对象里面的bar也会被修改。let，const声明的东西是只是放到variable_对象里。
+
+
+
+总结：
+
+let和const怎么保存？
+
+在最新的ECMA标准里面，它创建出来的执行上下文里面会关联一个变量环境，叫做VE。变量环境，具体引擎在实现的时候的话，比如像V8引擎，它使用了hashmap来保存代码中声明的变量，并且也是从里面来查找的。现在的名称也是叫viriable下划线了。和window的GO不是同一个对象。
+
+## 9.6 块级作用域（var和let/const区别4）
+
+### 1.作用域的理解
+
+```js
+
+// 声明对象的字面量
+// var obj = {
+//   name: "why"
+// }
+
+// ES5中没有块级作用域
+// 块代码(block code)
+// {
+//   // 声明一个变量
+//   var foo = "foo"
+// }
+
+// console.log(foo)
+
+
+// 在ES5中只有两个东西会形成作用域
+// 1.全局作用域
+// 2.函数作用域
+// function foo() {
+//   var bar = "bar"
+// }
+
+// console.log(bar)//函数作用域里面声明的，外面不能访问
+
+function foo() {
+
+  function demo() {
+    
+  }
+
+}
+//当前代码里面有3个作用域，全局作用域，foo函数作用域，demo函数作用域
+
+```
+
+### 2.块级作用域的理解
+
+在ES6中新增了块级作用域，并且通过let、const、function、class声明的标识符是具备块级作用域的限制的：
+
+引擎会对函数的声明进行特殊的处理，允许像var那样进行提升；
+
+ ```js
+ 
+ // ES6的代码块级作用域
+ // 对let/const/function/class声明的类型是有效
+ {
+   let foo = "why"
+   function demo() {
+     console.log("demo function")
+   }
+   class Person {}
+ }
+ 
+ // console.log(foo) // foo is not defined
+ 
+ var p = new Person() // Person is not defined
+ 
+ //函数比较特殊， 不同的浏览器有不同实现的(大部分浏览器为了兼容以前的代码, 让function是没有块级作用域)
+  demo()//demo function
+  //如果一个浏览器只支持es6的代码,demo（）会报错
+ 
+ ```
+
+### 3.if-switch-for块级代码
+
+```js
+// if语句的代码就是块级作用域
+ if (true) {
+   var foo = "foo"
+   let bar = "bar"
+ }
+
+ console.log(foo)//foo
+ console.log(bar)//test1.html:71 Uncaught ReferenceError: bar is not defined
+
+```
+
+```js
+// switch语句的代码也是块级作用域
+ var color = "red"
+
+ switch (color) {
+   case "red":
+     var foo = "foo"
+     let bar = "bar"
+ }
+
+ console.log(foo)//foo
+ console.log(bar)// bar is not 
+```
+
+```js
+// for语句的代码也是块级作用域
+ for (var i = 0; i < 10; i++) {
+    console.log("Hello World" + i)
+ }
+
+ console.log(i) //10
+
+ for (let j = 0; j < 10; j++) {
+}
+
+console.log(j) // j is not defined
+
+```
+
+## 9.7 **块级作用域的应用**
+
+```js
+const btns = document.getElementsByTagName('button')
+
+// for (var i = 0; i < btns.length; i++) {
+//   (function(n) {
+//     btns[i].onclick = function() {
+//       console.log("第" + n + "个按钮被点击")
+//     }
+//   })(i)
+// }
+
+// console.log(i)
+
+for (let i = 0; i < btns.length; i++) {
+  btns[i].onclick = function() {
+    console.log("第" + i + "个按钮被点击")
+  }
+}
+
+// console.log(i)
+
+```
+
+
+
+# 10 ES6
+
+
+
+
+
+# 11 ES6-7
+
+
+
+
+
+# 12 ES8-12
+
+
+
+
+
+# 13 Proxy-Reflect
+
+
+
+## 13.1 **监听对象的操作**
+
+### 1. 使用Object.defineProperty来监听
+
+```js
+var obj = {
+  name : 'why',
+  age : 18,
+}
+
+Object.defineProperty(obj, 'age', {
+
+  get(){
+    console.log('getter ');
+    return this.age
+  },
+  set(newValue){
+    console.log('setter ' + newValue);
+    this.age = newValue;
+  },
+})
+console.log(obj.age);
+//test1.html:60 Uncaught RangeError: Maximum call stack size exceeded
+//存取属性描述符里面的模拟一个访问和设置的默认行为的时候
+//必须的在里面新添一个属性不然会造成循环引用(狂call布置)
+
+/* obj.age --> get.call(obj)---> return this.age--->obj.age
+obj.age --> get.call(obj) --->this._age */
+```
+
+```js
+var obj = {
+  name : 'why',
+  age : 18,
+}
+
+Object.defineProperty(obj, 'age', {
+
+  get(){
+    console.log('getter ');
+    return this._age
+  },
+  set(newValue){
+    console.log('setter ' + newValue);
+    this._age = newValue;
+  },
+})
+console.log(obj.age);
+//getter
+//undefined
+
+obj.age = 19;
+console.log(obj.age);
+//setter 19
+//getter
+//19
+
+
+
+//obj.age --> get.call(obj) --->this._age 
+```
+
+
+
+```js
+var obj = {
+  name : 'why',
+  age : 18,
+
+}
+
+Object.keys(obj).forEach(key => {
+  let value = obj[key];
+
+  Object.defineProperty(obj, key, {
+    get: function(){
+      console.log(`监听到obj对象的${key}属性被访问了`)
+      return value
+    },
+    set: function(newValue) {
+      console.log(`监听到obj对象的${key}属性被设置值`)
+      value = newValue
+    }
+  })
+})
+
+console.log(obj.name);
+obj.name = "kobe"
+
+console.log(obj.age);
+obj.age = 19
+```
+
+![alt](img/75.png)
+
+## 13.2 Proxy
+
+### 1. Proxy的基本使用
+
+![alt](img/76.png)
+
+![alt](img/77.png)
+
+```js
+const obj = {
+  name: "why",
+  age: 18
+}
+
+const objProxy = new Proxy(obj, {
+  // 获取值时的捕获器
+  get: function(target, key) {
+    console.log(`监听到对象的${key}属性被访问了`, target)
+    return target[key]
+  },
+
+  // 设置值时的捕获器
+  set: function(target, key, newValue) {
+    console.log(`监听到对象的${key}属性被设置值`, target)
+    target[key] = newValue
+  }
+})
+
+console.log(objProxy.name)
+console.log(objProxy.age)
+
+objProxy.name = "kobe"
+objProxy.age = 30
+
+console.log(obj.name)
+console.log(obj.age)
+
+```
+
+### 2. Proxy的其他捕获器
+
+```js
+const obj = {
+  name: "why", // 数据属性描述符
+  age: 18
+}
+
+// 变成一个访问属性描述符
+// Object.defineProperty(obj, "name", {
+
+// })
+
+const objProxy = new Proxy(obj, {
+  // 获取值时的捕获器
+  get: function(target, key) {
+    console.log(`监听到对象的${key}属性被访问了`, target)
+    return target[key]
+  },
+
+  // 设置值时的捕获器
+  set: function(target, key, newValue) {
+    console.log(`监听到对象的${key}属性被设置值`, target)
+    target[key] = newValue
+  },
+
+  // 监听in的捕获器
+  has: function(target, key) {
+    console.log(`监听到对象的${key}属性in操作`, target)
+    return key in target
+  },
+
+  // 监听delete的捕获器
+  deleteProperty: function(target, key) {
+    console.log(`监听到对象的${key}属性in操作`, target)
+    delete target[key]
+  }
+})
+
+
+// in操作符
+// console.log("name" in objProxy)
+
+// delete操作
+delete objProxy.name
+
+```
+
+使用defineProperty是有改掉原对象obj的属性操纵符号的，我们不应该随便去改掉他，obj的name本来是一个数据属性操作符，然后就变成了访问属性描述符了。使用Proxy的话是对代理对象进行各种各样的操作。
+
+### 3.**Proxy所有捕获器**
+
+![alt](img/78.png)
+
+在这里，handler.apply()和handle.construct()是用于函数对象
+
+### 4.Proxy对函数对象的监听
+
+```js
+function foo() {
+
+}
+
+const fooProxy = new Proxy(foo, {
+  apply: function(target, thisArg, argArray) {
+    console.log("对foo函数进行了apply调用")
+    return target.apply(thisArg, argArray)
+  },
+  construct: function(target, argArray, newTarget) {
+    console.log("对foo函数进行了new调用")
+    return new target(...argArray)
+  }
+})
+
+fooProxy.apply({}, ["abc", "cba"])
+new fooProxy("abc", "cba")
+
+/* 
+对foo函数进行了apply调用
+对foo函数进行了new调用
+*/
+
+```
+
+
+
+## 13.3 reflect
+
+### 1.**Reflect的作用**
+
+![alt](img/79.png)
+
+ 比较 Reflect 和 Object 方法
+
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Reflect/Comparing_Reflect_and_Object_methods
+
+### 2.**Reflect的常见方法**
+
+![alt](img/80.png)
 
