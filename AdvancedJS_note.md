@@ -78,9 +78,9 @@ eval的执行必须经过JS解释器，不能被JS引擎优化；
 
 3. 严格模式禁用了在ECMAScript未来版本中可能会定义的一些语法；
 
-![alt](./img/39.png)
+![alt](./img/39.PNG)
 
-![alt](./img/40.png)
+![alt](./img/40.PNG)
 
 
 
@@ -519,7 +519,7 @@ var fn2 = function(){}
 
 ## 1.1浏览器工作原理，核心
 
-![alt](./img/1.png)
+![alt](./img/1.PNG)
 
 1、IE浏览器内核：Trident内核，也是俗称的IE内核；
  2、Chrome浏览器内核：统称为Chromium内核或Chrome内核，以前是Webkit内核，现在是Blink内核；
@@ -535,7 +535,7 @@ var fn2 = function(){}
 
 ## 1.2 浏览器渲染过程
 
-![alt](./img/2.png)
+![alt](./img/2.PNG)
 
 
 
@@ -571,7 +571,7 @@ css也会被css Parser进行解析，解析成css规则；然后应用到dom树�
 
 ## 1.3JavaScript引擎
 
-![alt](./img/3.png)
+![alt](./img/3.PNG)
 
 V8性能好，node也是使用的是v8
 
@@ -579,11 +579,11 @@ V8性能好，node也是使用的是v8
 
 
 
-![alt](./img/4.png)
+![alt](./img/4.PNG)
 
 ## 1.4 V8引擎的工作原理
 
-![alt](./img/5.png)
+![alt](./img/5.PNG)
 
 parse 解析包括词法分析和语法分析；
 
@@ -603,7 +603,7 @@ parse 解析包括词法分析和语法分析；
 
 
 
-![alt](./img/6.png)
+![alt](./img/6.PNG)
 
 
 
@@ -666,7 +666,7 @@ var globalObject = {
 
 比如说是，想要全局里面执行foo()这个函数，就需要把foo这个函数的代码放到栈里面，foo()里面还有调用另一个函数，再把另一个函数的代码放到栈里面；---》入栈
 
-![alt](./img/7.png)
+![alt](./img/7.PNG)
 
 
 
@@ -680,7 +680,7 @@ GEC里面会创建VO对象，然后将VO（variable Object）指向GO（解析�
 
 放入栈后，就会开始真正执行代码
 
-![alt](./img/8.png)
+![alt](./img/8.PNG)
 
 
 
@@ -798,7 +798,7 @@ console.log('foo')
 
 接下来打印m，这时候m是undefined
 
-![alt](./img/9.png)
+![alt](./img/9.PNG)
 
 接下来赋值m为10，
 
@@ -842,13 +842,13 @@ console.log(name)//'why'
 
 在js里面，只有函数才会产生作用域
 
-![alt](./img/10.png)
+![alt](./img/10.PNG)
 
 
 
 调用foo（123）的时候，创建AO对象之后，
 
-![alt](./img/11.png)
+![alt](./img/11.PNG)
 
 图片里面的bar后面是0xb00
 
@@ -856,7 +856,7 @@ console.log(name)//'why'
 
 接下来执行foo里面的代码，执行到12行
 
-![alt](./img/13.png)
+![alt](./img/13.PNG)
 
 
 
@@ -864,7 +864,7 @@ console.log(name)//'why'
 
 一旦调用函数，就要在ECS里面创建函数的执行上下文,
 
-![alt](./img/14.png)
+![alt](./img/14.PNG)
 
 创建bar的AO，然后执行代码体，console.log(name),
 
@@ -884,17 +884,17 @@ bar的AO里面是空的，就要去parent scope里面去找，bar是在foo函数
 
 执行完第一行代码之后，
 
-![alt](./img/15.png)
+![alt](./img/15.PNG)
 
 执行完foo（）之前
 
-![alt](./img/16.png)
+![alt](./img/16.PNG)
 
 
 
 执行完console.log(message)代码之后
 
-![alt](./img/17.png)
+![alt](./img/17.PNG)
 
 函数里面的变量和函数的调用位置没有关系，至于定义函数的位置有关系。虽然foo实在bar里面调用的，但是父级作用域还是全局的，使用GO里面的message。
 
@@ -1016,26 +1016,26 @@ FEC function execution context
 
 ## 2.1认识内存管理
 
-![alt](./img/18.png)
+![alt](./img/18.PNG)
 
 
 
 ## 2.2**JS的内存管理**
 
-![alt](./img/19.png)
+![alt](./img/19.PNG)
 
 
 
 ## **2.3 JS的垃圾回收**
 
-![alt](./img/20.png)
+![alt](./img/20.PNG)
 
 ### 1.常见的GC算法 – 引用计数（reference counting）
 
-![alt](./img/21.png)
+![alt](./img/21.PNG)
 
 当前有一个引用指向我这个对象的时候，我就把我的计数器加1，这个数字存储在retain count里面。默认是0。
-![alt](./img/23.png)
+![alt](./img/23.PNG)
 现在obj对象的引用是3，
 如果写了个info.friend = null,引用就变成了2
 当obj的引用变成0的时候，这个引用空间就会被GC回收。
@@ -1048,7 +1048,7 @@ var obj2 = {firned: obj1}
 除非 obj1.friend = null来解决。
 ### 2.常见的GC算法 – 标记清除
 
-![alt](./img/22.png)
+![alt](./img/22.PNG)
 现在主要使用这种算法。
 
 
@@ -1315,7 +1315,7 @@ test();
 
 解析test是函数，就创建一个函数对象test（oxb00），里面有函数的父级作用域，也就是全局的GO对象（ox100）。,还有函数执行体（函数代码）。
 
-![alt](./img/24.png)
+![alt](./img/24.PNG)
 
 5 接下来执行执行代码，先给message赋值，变成了hello，然后执行函数foo。
 
@@ -1323,19 +1323,19 @@ test();
 
 默认里面没有对象，然后解析函数，里面放入name:undefined,age:undefined;
 
-![alt](./img/25.png)
+![alt](./img/25.PNG)
 
 
 
 7.然后执行一行一行执行foo里面的代码，同时把AO里面的name赋值'foo'，age赋值18；
 
-![alt](./img/26.png)
+![alt](./img/26.PNG)
 
 
 
 8.foo函数执行完之后，栈里面的foo函数执行上下文就会被销毁，一旦销毁，对foo的AO对象的引用将会没有，然后oxaoo就会被销毁。
 
-![alt](./img/27.png)
+![alt](./img/27.PNG)
 
 一般情况下，在函数执行上下文被销毁的同时，函数的AO对象也会被销毁
 
@@ -1370,44 +1370,44 @@ fn()
 
 执行完var fn = foo();之后
 
-![alt](./img/28.png)
+![alt](./img/28.PNG)
 
 然后foo的执行上下文被销毁，但是bar不会被销毁，因为fn指着它。
 然后bar对象不会被销毁，它上面的foo的ao对象也不会被销毁的。因为bar里面有parentScope这个东西，它指向foo的AO对象。
-![alt](./img/29.png)
+![alt](./img/29.PNG)
 
 接下来执行fn（）
-![alt](./img/30.png)
+![alt](./img/30.PNG)
 
 然后销毁fn的执行上下文.
-![alt](./img/31.png)
+![alt](./img/31.PNG)
 
 foo的AO对象是没有被销毁的，因为bar的父级作用域是指向foo的AO的。
 内存泄漏：这里的bar函数对象一直不会被销毁，也就是foo的AO也一直不会被销毁。
 如果执行完一次fn之后，就再也不会执行这个fn了，那么保存的bar和foo的AO也就没有意义了。
 该销毁的东西没有被销毁，就是内存泄漏。
 fn= null;就可以解决
-![alt](./img/32.png)
+![alt](./img/32.PNG)
 虽然这时候bar和foo的AO循环引用，但是根据标记清除法，只要从根对象OG开始能找到的对象就不会被销毁。
 
 但是bar和foo的AO从根对象指不向他们，他们就会被销毁。
-<img src="img/33.png" alt="alt" style="zoom:80%;" />
+<img src="img/33.PNG" alt="alt" style="zoom:80%;" />
 
 
 
 如果也想销毁掉foo这个函数，也是一样，直接foo = null；就可以了；
 
-<img src="img/34.png" alt="alt" style="zoom:50%;" />
+<img src="img/34.PNG" alt="alt" style="zoom:50%;" />
 
 
 
 ## 2.8 内存泄漏
 
-![alt](./img/35.png)
+![alt](./img/35.PNG)
 
 
 
-![alt](./img/36.png)
+![alt](./img/36.PNG)
 
 
 
@@ -1571,7 +1571,7 @@ console.log(window)
 
 在执行代码的时候，比如console.log(this.name),就回去函数执行上下文栈中去看一下这个this到底是谁。那么this到底是谁呢？在这里，this是动态绑定的，就是指函数马上要被执行的时候，才会被绑定上去。不是在代码编译的时候确定的。是在函数马上执行的时候，才确定this是谁。所以有非常多的绑定规则。
 
-![alt](./img/37.png)
+![alt](./img/37.PNG)
 
  this指向什么, 跟函数所处的位置是没有关系的.跟函数的调用方式以及调用的位置有关系
 
@@ -2896,7 +2896,7 @@ console.log(obj);
 
 **arguments** 是一个 对应于 **传递给函数的参数** 的 **类数组(array-like)对象**
 
-![alt](./img/38.png)
+![alt](./img/38.PNG)
 
 array-like意味着它不是一个数组类型，而是一个对象类型：
 
@@ -3567,7 +3567,7 @@ function hyCompose(...fns){
 
 ## 5.2 创建对象的两种方式
 
-![alt](./img/41.png)
+![alt](./img/41.PNG)
 
 ## 5.3 对对象属性进行操作
 
@@ -3602,9 +3602,9 @@ for (var key in obj) {
 
 ## 5.4 **对属性操作的控制**
 
-![alt](./img/43.png)
+![alt](./img/43.PNG)
 ## 5.5 Object.defineProperty
-![alt](./img/42.png)
+![alt](./img/42.PNG)
 
 ```js
 var obj = {
@@ -3633,11 +3633,11 @@ console.log(obj.height)
 1. 数据属性（Data Properties）描述符（Descriptor）；
 2. 存取属性（Accessor访问器 Properties）描述符（Descriptor）；
 
-![alt](./img/44.png)
+![alt](./img/44.PNG)
 
 ### 2.**数据属性描述符**
 
-![alt](./img/45.png)
+![alt](./img/45.PNG)
 
 1. configurable
 
@@ -3727,7 +3727,7 @@ console.log(obj.address)//"北京市"
 
 ### 3.**存取属性描述符**
 
-![alt](./img/46.png)
+![alt](./img/46.PNG)
 
 ```js
 var obj = {
@@ -4161,11 +4161,11 @@ console.log(f2.__proto__ === foo.prototype)
 
  那么也就意味着我们通过Person构造函数创建出来的所有对象的[[prototype]]属性都指向Person.prototype：
 
-![alt](./img/47.png)
+![alt](./img/47.PNG)
 
-![alt](./img/48.png)
+![alt](./img/48.PNG)
 
-![alt](./img/49.png)
+![alt](./img/49.PNG)
 
 
 
@@ -4262,7 +4262,7 @@ p2.eating()
 
 ```
 
-![alt](./img/50.png)
+![alt](./img/50.PNG)
 
 
 
@@ -4288,7 +4288,7 @@ Object也是一个构造函数。但是它的原型对象是的````__proto__````
 
 
 
-![alt](./img/53.png)
+![alt](./img/53.PNG)
 
 
 
@@ -4312,7 +4312,7 @@ Object也是一个构造函数。但是它的原型对象是的````__proto__````
 
 ## 7.1 **面向对象的特性 – 继承**
 
-![alt](./img/51.png)
+![alt](./img/51.PNG)
 
 编写类的过程是一个封装的过程
 
@@ -4320,17 +4320,17 @@ Object也是一个构造函数。但是它的原型对象是的````__proto__````
 
 
 
-![alt](./img/52.png)
+![alt](./img/52.PNG)
 
 ## 7.2 Object的原型的原型是顶层原型
 
 Object本质上是一个函数
 
-![alt](./img/54.png)
+![alt](./img/54.PNG)
 
 ## 7.3 **Object是所有类的父类**
 
-![alt](./img/55.png)
+![alt](./img/55.PNG)
 
 Object的原型对象
 
@@ -4427,7 +4427,7 @@ var stu = new Student()
 
 ```
 
-![alt](./img/56.png)
+![alt](./img/56.PNG)
 
 缺点：
 
@@ -4470,9 +4470,9 @@ var stu3 = new Student("lilei", 112)
 
 ## 7.6 继承-借用构造函数（父构造函数）方案
 
-![alt](./img/57.png)
+![alt](./img/57.PNG)
 
-![alt](./img/58.png)
+![alt](./img/58.PNG)
 
 ```js
 // 父类: 公共属性和方法
@@ -4605,7 +4605,7 @@ console.log(info3.__proto__);
 
 ## 7.8 继承-寄生式继承
 
-![alt](./img/59.png)
+![alt](./img/59.PNG)
 
 ```js
  
@@ -4835,7 +4835,7 @@ Person { studying: [Function (anonymous)] }
 
 ## 7.10 **对象的方法补充**
 
-![alt](./img/60.png)
+![alt](./img/60.PNG)
 
 ### 1. Object.create()
 
@@ -4992,11 +4992,11 @@ console.log(obj.isPrototypeOf(info))//true
 
 ## 7.11 **原型继承关系**
 
-![alt](./img/61.png)
+![alt](./img/61.PNG)
 
-![alt](./img/62.png)
+![alt](./img/62.PNG)
 
-![alt](./img/63.png)
+![alt](./img/63.PNG)
 
 ```js
 //Function 也是一个function，也有作为对象的属性，有__proto__属性
@@ -5013,7 +5013,7 @@ console.log(Function.prototype === Function.__proto__)//true
 
 ## 8.1 认识类
 
-![alt](./img/64.png)
+![alt](./img/64.PNG)
 
 ```js
 // 类的声明
@@ -5053,7 +5053,7 @@ class Person{
 
 
 
-![alt](./img/65.png)
+![alt](./img/65.PNG)
 
 ## 8.2 class的构造方法
 
@@ -5308,7 +5308,7 @@ console.log(stu);
 //Student {name: 'why', age: 18, sno: 111}
 ```
 
-![alt](./img/67.png)
+![alt](./img/67.PNG)
 
 ### 2. 父类原型方法的继承
 
@@ -6067,7 +6067,7 @@ var ns = new NewStudent()
 ns.running()//running~
 ```
 
-![alt](./img/68.png)
+![alt](./img/68.PNG)
 
 
 
@@ -6123,7 +6123,7 @@ ns.eating()
 
 ## 8.10 **JavaScript中的多态**
 
-![alt](./img/69.png)
+![alt](./img/69.PNG)
 
 ```js
 // 传统的面向对象多态是有三个前提:
@@ -6483,7 +6483,7 @@ console.log(foo)//abc
 
 
 
-![alt](./img/70.png)
+![alt](./img/70.PNG)
 
 
 
@@ -6505,13 +6505,13 @@ let foo = "foo"
 
 当词法环境创建的时候，这个变量也已经被创建了
 
-![alt](./img/71.png)
+![alt](./img/71.PNG)
 
 在执行上下文被创建阶段let，const会被创建出来
 
 ## 9.5 **Window对象添加属性**（var和let/const区别3）
 
-![alt](./img/72.png)
+![alt](./img/72.PNG)
 
 ```js
 // var foo = "foo"
@@ -6529,7 +6529,7 @@ console.log(window.foo);//undefined
 
 以前VO，现在VE
 
-![alt](./img/73.png)
+![alt](./img/73.PNG)
 
 每一个执行上下文会关联一个环境变量VE，VE也会关联在一个对象上面，这个对象记录着我们代码里面声明的变量，代码里面有foo，这个对象里面也有foo，message也有。但是，但是和之前的实现不一样。
 
@@ -6545,7 +6545,7 @@ ECMA时规范，每个浏览器按照规范实现功能，规范要求实现VE�
 
 以前是类似以上的实现的，但是最新的规范里面名称变调了，并且有let和const存在，所以现在放到variable_对象里面，
 
-![alt](./img/74.png)
+![alt](./img/74.PNG)
 
 window 不属于v8，window是由包含v8的浏览器实现的。早期的话，window和go指向同一个，但是现在由let，
 
@@ -6817,15 +6817,15 @@ console.log(obj.age);
 obj.age = 19
 ```
 
-![alt](./img/75.png)
+![alt](./img/75.PNG)
 
 ## 13.2 Proxy
 
 ### 1. Proxy的基本使用
 
-![alt](./img/76.png)
+![alt](./img/76.PNG)
 
-![alt](./img/77.png)
+![alt](./img/77.PNG)
 
 ```js
 const obj = {
@@ -6910,7 +6910,7 @@ delete objProxy.name
 
 ### 3.**Proxy所有捕获器**
 
-![alt](./img/78.png)
+![alt](./img/78.PNG)
 
 在这里，handler.apply()和handle.construct()是用于函数对象
 
@@ -6948,7 +6948,7 @@ new fooProxy("abc", "cba")
 
 ### 1.**Reflect的作用**
 
-![alt](./img/79.png)
+![alt](./img/79.PNG)
 
  比较 Reflect 和 Object 方法
 
