@@ -6956,5 +6956,5 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects
 
 ### 2.**Reflect的常见方法**
 
-![alt](./img/80.png)
+![alt](./img/80.PNG)
 
