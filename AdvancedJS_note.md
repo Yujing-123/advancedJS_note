@@ -6439,7 +6439,9 @@ bar(obj)//why 18
 
 
 
-## 9.3 **let/const基本使用**（var和let/const区别1）
+## 9.3 var/let/const
+
+###  9.3.1 **let/const基本使用**（var和let/const区别1）
 
 注意事项一: const本质上是传递的值不可以修改
 
@@ -6479,7 +6481,7 @@ console.log(foo)//abc
 
 
 
-## 9.4 **let/const作用域提升**（var和let/const区别2）
+### 9.3.2 **let/const作用域提升**（var和let/const区别2）
 
 
 
@@ -6509,7 +6511,7 @@ let foo = "foo"
 
 在执行上下文被创建阶段let，const会被创建出来
 
-## 9.5 **Window对象添加属性**（var和let/const区别3）
+### 9.3.3 **Window对象添加属性**（var和let/const区别3）
 
 ![alt](./img/72.PNG)
 
@@ -6563,9 +6565,9 @@ let和const怎么保存？
 
 在最新的ECMA标准里面，它创建出来的执行上下文里面会关联一个变量环境，叫做VE。变量环境，具体引擎在实现的时候的话，比如像V8引擎，它使用了hashmap来保存代码中声明的变量，并且也是从里面来查找的。现在的名称也是叫viriable下划线了。和window的GO不是同一个对象。
 
-## 9.6 块级作用域（var和let/const区别4）
+### 9.3.4 块级作用域（var和let/const区别4）
 
-### 1.作用域的理解
+#### 1.作用域的理解
 
 ```js
 
@@ -6604,7 +6606,7 @@ function foo() {
 
 ```
 
-### 2.块级作用域的理解
+#### 2.块级作用域的理解
 
 在ES6中新增了块级作用域，并且通过let、const、function、class声明的标识符是具备块级作用域的限制的：
 
@@ -6632,7 +6634,7 @@ function foo() {
  
  ```
 
-### 3.if-switch-for块级代码
+#### 3.if-switch-for块级代码
 
 ```js
 // if语句的代码就是块级作用域
@@ -6675,7 +6677,7 @@ console.log(j) // j is not defined
 
 ```
 
-## 9.7 **块级作用域的应用**
+### 9.3.5 **块级作用域的应用**
 
 ```js
 const btns = document.getElementsByTagName('button')
@@ -6697,6 +6699,428 @@ for (let i = 0; i < btns.length; i++) {
 }
 
 // console.log(i)
+
+```
+
+### 9.3.6 let const的暂时性死区
+
+![alt](./img/87.png)
+
+### 9.3.7 var，let, const 的选择
+
+![alt](img/86.PNG)
+
+## 9.4 **字符串模板
+
+### 9.4.1 基本使用1
+
+![alt](img/88.PNG)
+
+```js
+// ES6之前拼接字符串和其他标识符
+const name = "why"
+const age = 18
+const height = 1.88
+
+// console.log("my name is " + name + ", age is " + age + ", height is " + height)
+
+// ES6提供模板字符串 ``
+const message = `my name is ${name}, age is ${age}, height is ${height}`
+console.log(message)
+
+//可以在里面写表达式和函数
+const info = `age double is ${age * 2}`
+console.log(info)
+
+function doubleAge() {
+  return age * 2
+}
+
+const info2 = `double age is ${doubleAge()}`
+console.log(info2)
+```
+
+### 9.4.2 **基本使用**2
+
+![alt](img/89.PNG)
+
+```js
+function foo(m, n, x) {
+  console.log(m, n, x, '---------')
+}
+
+foo("Hello", "World")
+
+// 另外调用函数的方式: 标签模块字符串
+ foo``
+ //['', raw: Array(1)] undefined undefined '---------'
+ foo`Hello World`
+ //['Hello World', raw: Array(1)] undefined undefined '---------'
+
+const name = "why"
+const age = 18
+
+// ['Hello', 'Wo', 'rld']
+foo`Hello${name}Wo${age}rld`
+//['Hello', 'Wo', 'rld', raw: Array(3)] 'why' 18 '---------'
+
+
+// 第一个参数依然是模块字符串中整个字符串, 只是被切成多块,放到了一个数组中
+// 第二个参数是模块字符串中, 第一个 ${}
+// 第三个参数是模块字符串中, 第二个 ${}
+//....
+```
+
+
+
+## 9.5 **函数的默认参数**
+
+n在ES6之前，我们编写的函数参数是没有默认值的，所以我们在编写函数时，如果有下面的需求： 
+
+1.传入了参数，那么使用传入的参数；
+
+2.没有传入参数，那么使用一个默认值；
+
+ 而在ES6中，我们允许给函数一个默认值：
+
+```js
+// ES5以及之前给参数默认值
+/**
+ * 缺点:
+ *  1.写起来很麻烦, 并且代码的阅读性是比较差
+ *  2.这种写法是有bug,比如参数是foo(0, "")
+ */
+function foo(m, n){
+  m = m || 'aaa';
+  n = n || 'bbb';
+
+  console.log(m, n);
+}
+
+foo(0, "")//aaa bbb
+
+//1.ES6可以给参数提供默认值
+function foo(m = 'aaa', n = 'bbb'){
+  console.log(m, n);
+}
+foo()//aaa bbb
+foo(0, '')//0 '' 
+
+/* 
+
+以上装换成es5
+function foo() {
+  var m =
+    arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "aaa";
+  var n =
+    arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "bbb";
+  console.log(m, n);
+}
+
+*/
+```
+
+![alt](img/90.PNG)
+
+```js
+// 2.对象参数和默认值以及解构
+/* function printInfo(info = {name : 'why', age : 18}){
+  console.log(info.name, info.age);
+} */
+
+
+function printInfo({name, age} = {name : 'why', age : 18}){
+  console.log(name, age);
+}
+printInfo({name:'kobe', age: 40})//kobe 40
+printInfo()//why 18
+
+// 另外一种写法
+
+function printInfo1({name = "why", age = 18} = {}) {
+  console.log(name, age)
+}
+//空对象里面没有name和age，所以利用对象的解构，设置name和age的默认值
+
+// 3.有默认值的形参最好放到最后
+function bar(x, y, z = 30) {
+  console.log(x, y, z)
+}
+
+//有默认值的函数的length属性
+//函数有length属性，代表有几个形参
+function baz(x, y, z, m, n) {
+  console.log(x, y, z, m, n)
+}
+
+console.log(baz.length);//5
+
+function baz1(x, y, z, m, n = 30) {
+  console.log(x, y, z, m, n)
+}
+console.log(baz1.length);//4
+
+function baz1(x, y, z=30, m, n ) {
+  console.log(x, y, z, m, n)
+}
+console.log(baz1.length);//2
+
+```
+
+
+
+## 9.6 **函数的剩余参数**
+
+![alt](img/91.PNG)
+
+```js
+function foo(m, n, ...arg){
+  console.log(m, n);//20 30
+  console.log(arg);//(3) [40, 50, 60]
+}
+//如果最后一个参数是 ... 为前缀的，那么它会将剩余的参数放到该参数中，并且作为一个数组；
+
+foo(20, 30, 40, 50, 60)
+
+
+// rest paramaters必须放到最后
+// Rest parameter must be last formal parameter
+```
+
+## 9.7 **函数箭头函数的补充**
+
+箭头函数是没有显式原型的，所以不能作为构造函数，使用new来创建对象；
+
+```js
+ function foo() {
+ }
+
+ console.log(foo.prototype)
+ const f = new foo()
+ f.__proto__ = foo.prototype
+
+var bar = () => {
+  console.log(this, arguments)
+}
+
+console.log(bar.prototype)
+console.log(bar.__proto__ == Function.prototype);//true
+
+// bar is not a constructor
+const b = new bar()
+
+//箭头函数没有显示原型，也没有this，会去上层作用域去找this，
+//也没有arguments，也是会去上层作用域去找arguments
+```
+
+## 9.8 **展开语法**
+
+![alt](img/92.PNG)
+
+```js
+
+const names = ["abc", "cba", "nba"]
+const name = "why"
+const info = {name: "why", age: 18}
+
+// 1.函数调用时
+function foo(x, y, z) {
+  console.log(x, y, z)
+}
+
+// foo.apply(null, names)
+foo(...names)//abc cba nba
+foo(...name)//w h y
+
+// 2.构造数组时
+const newNames = [...names, ...name]
+console.log(newNames)
+// ['abc', 'cba', 'nba', 'w', 'h', 'y']
+
+
+// 3.构建对象字面量时ES2018(ES9)
+const obj = { ...info, address: "广州市", ...names }
+console.log(obj)
+//{0: 'abc', 1: 'cba', 2: 'nba', name: 'why', age: 18, address: '广州市'}
+
+```
+
+展开运算符进行的是浅拷贝
+
+```js
+const info = {
+  name: "why",
+  friend: { name: "kobe" }
+}
+
+const obj = { ...info, name: "coderwhy" }
+// console.log(obj)
+obj.friend.name = "james"
+
+console.log(info.friend.name)//james
+
+//浅拷贝就是指当obj = { ...info}的时候，里面key和相对应的value是直接拿过来给obj的
+
+```
+
+![alt](img/93.PNG)
+
+
+
+## 9.9 ES6中表示数值的方式
+
+```js
+const num1 = 100 // 十进制
+
+// b -> binary
+const num2 = 0b100 // 二进制
+// o -> octonary
+const num3 = 0o100 // 八进制
+// x -> hexadecimal
+const num4 = 0x100 // 十六进制
+
+console.log(num1, num2, num3, num4)
+
+// 大的数值的连接符(ES2021 ES12)
+const num = 10_000_000_000_000_000
+console.log(num)
+
+//100 4 64 256
+//test.html:64 10000000000000000
+```
+
+## 9.10 Symbol
+
+### 1.为什么要使用Symbol
+
+
+
+```js
+// 1.ES6之前, 对象的属性名(key)
+ var obj1 = {
+   name: "why",
+   friend: { name: "kobe" },
+   'age': 18
+ }
+/* 
+在底层，这里的key无论加不加双引号，在底层都是字符串形式表示。
+*/
+
+
+console.log(obj1.age);//18
+console.log(Object.keys(obj1));//(3) ['name', 'friend', 'age'] 是以字符串的形式表示的
+console.log(obj1['age']);//18
+//console.log(obj1[age]);//test.html:65 Uncaught ReferenceError: age is not defined
+
+// obj1['name'] = "james"
+// console.log(obj1) 会覆盖掉原来对象中的name
+
+// 在ES6之前，对象的属性名都是字符串形式，那么很容易造成属性名的冲突；
+
+```
+
+### 2.Symbol的基本使用
+
+![alt](img/94.PNG)
+
+```js
+//ES6中Symbol的基本使用
+const s1 = Symbol()
+const s2 = Symbol()
+
+console.log(s1 === s2) //false
+
+// ES2019(ES10)中, Symbol还有一个描述(description)
+const s3 = Symbol("aaa")
+console.log(s3.description)//'aaa'
+```
+
+
+
+### 3.Symbol值作为key
+
+![alt](img/95.PNG)
+
+```js
+// 3.Symbol值作为key
+// 3.1.在定义对象字面量时使用
+const s1 = Symbol()
+const s2 = Symbol()
+const s3 = Symbol()
+const obj = {
+  [s1]: "abc",
+  [s2]: "cba"
+}
+
+// 3.2.新增属性
+obj[s3] = "nba"
+
+// 3.3.Object.defineProperty方式
+const s4 = Symbol()
+Object.defineProperty(obj, s4, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value: "mba"
+})
+
+console.log(obj[s1], obj[s2], obj[s3], obj[s4])
+// 注意: 不能通过.语法获取
+// console.log(obj.s1)
+```
+
+### 4.遍历对象中的Symbol
+
+```js
+// 4.使用Symbol作为key的属性名,在遍历/Object.keys等中是获取不到这些Symbol值
+// 需要Object.getOwnPropertySymbols来获取所有Symbol的key
+
+console.log(Object.keys(obj))
+//通过这个方法获取不到symbol类型，是空数组
+console.log(Object.getOwnPropertyNames(obj))
+//通过这个方法获取不到symbol类型，是空数组
+console.log(Object.getOwnPropertySymbols(obj))
+// [Symbol(), Symbol(), Symbol(), Symbol()] 
+//这个方法只能获取symbol类型，就算对象里面有普通的属性，也不会输出
+
+const sKeys = Object.getOwnPropertySymbols(obj)
+for (const sKey of sKeys) {
+  console.log(obj[sKey])
+}
+//通过这个方式进行遍历
+//abc
+//cba
+//nba
+//mba
+```
+
+
+
+### 4.值相同的Symbol
+
+前面我们讲Symbol的目的是为了创建一个独一无二的值，那么如果我们现在就是想创建相同的Symbol应该怎么 
+
+来做呢？
+
+1.我们可以使用Symbol.for方法来做到这一点；
+
+2.并且我们可以通过Symbol.keyFor方法来获取对应的key；
+
+```js
+// 5.Symbol.for(key)/Symbol.keyFor(symbol)
+//希望某些条件下创建出来的symbol值是一样的
+
+/* 
+Symbol.for(key) 方法会根据给定的键 key，来从运行时的 symbol 注册表中找到对应的 symbol，如果找到了，则返回它，否则，新建一个与该键关联的 symbol，并放入全局 symbol 注册表中。
+*/
+const sa = Symbol.for("aaa")
+const sb = Symbol.for("aaa")
+console.log(sa === sb)//true
+
+const key = Symbol.keyFor(sa)
+console.log(key)//'aaa'
+const sc = Symbol.for(key)
+console.log(sa === sc)//true
 
 ```
 
@@ -6824,6 +7248,35 @@ obj.age = 19
 ### 1. Proxy的基本使用
 
 ![alt](./img/76.PNG)
+
+```js
+  var obj = {
+    name : 'why',
+    age : 18
+  };
+
+  const proxyObj = new Proxy(obj, {});
+  /* 
+  
+  1.先创建一个proxy对象，这个proxy对象就是obj对象进行代理
+  2.第二个参数{}里面是捕获器，里面可以捕获对代理对象的各种操作
+
+  */
+
+  console.log(proxyObj.name);//why
+  console.log(proxyObj.age);//18
+
+  proxyObj.name = "coder";
+  proxyObj.age = 30;
+
+  console.log(obj.name);//coder
+  console.log(obj.age);//30
+  //通过修改代理对象，把原来的对象也会修改掉
+  //捕获器不重写的情况下，他会自动完成对原来对象的操作
+  //设置值，直接设置到原来的对象里面
+```
+
+
 
 ![alt](./img/77.PNG)
 
@@ -6957,4 +7410,341 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects
 ### 2.**Reflect的常见方法**
 
 ![alt](./img/80.PNG)
+
+### 3.Reflect和Proxy一起使用
+
+Proxy的目的就是为了不对原来的对象做直接的操作，所以赋值的时候，是对代理对象proxyObj.age = 30 进行赋值，获取值的时候也是通过代理对象来获取属性console.log(proxyObj.age).但是现在事与愿违，现在通过对代理对象进行内部实现的时候，在捕获器里面，还是直接对里面的原来的对象进行操作，比如set里面的target[key] = newvalue等等。所以我们现在可以通过Reflect对元对象进行操作，而非直接对元对象进行操作。
+
+```js
+  var obj = {
+    name : 'why',
+    age : 18
+  };
+
+  const objProxy = new Proxy(obj, {
+    get: function(target, key, reveiver){
+      console.log('get---------');
+      return Reflect.get(target, key)
+    },
+    set: function(target, key, newvalue,reveiver){
+      console.log('set----------');
+      Reflect.set(target, key, newvalue)
+    }
+  })
+
+  console.log(objProxy.age);
+  objProxy.age = 30;
+  console.log(objProxy.age);//30
+  console.log(obj.age);//30
+
+
+  /* 
+  在这里
+  Reflect.set(target, key, newvalue)
+  和
+  target[key] = newValue
+  这两种方式是有区别的
+  1.target[key] = newValue 真的新值有没有被设置进去是不知道的
+  Object.freeze(target)设置之后，对象被冻结，也不能设置
+  2.Reflect.set(target, key, newvalue)会返回一个布尔类型的值
+  成功true，失败false，
+   const result = Reflect.set(target, key, newValue)
+    if (result) {
+    } else {
+    }
+  可以选择接下来怎么操作
+  */
+```
+
+
+
+### 4. **Receiver的作用**
+
+我们发现在使用getter、setter的时候有一个receiver的参数，它的作用是什么呢？
+
+如果我们的源对象（obj）有setter、getter的访问器属性，那么可以通过receiver来改变里面的this；
+
+```js
+//每一个对象都有一个get和set方法。
+const obj = {
+  _name : 'why',//默认是私有属性
+  get name() {
+    return this._name
+  },
+  set name(newvalue) {
+    this._name = newvalue
+  }
+}
+
+
+//obj.name = "coder"//.name调用的是set name（）
+//console.log(obj.name);//.name调用的是get name（）
+
+/* const objProxy = new Proxy(obj, {
+  get: function(target, key){
+    console.log("get方法被访问--------", key)
+    return Reflect.get(target, key)
+
+  },
+  set: function(target, key, newValue){
+    Reflect.set(target, key, newValue)
+  }
+}) */
+
+ //console.log(objProxy.name)
+//get方法被访问-------- name
+//只被访问了1次
+
+
+ //调用捕获器里面get方法，调用Reflect.get(target, key)
+ //因为key是name，这个时候会访问obj里面的get方法
+ //然后又通过this._name来访问obj里面的_name属性
+ /* 
+ 问题：访问_name，这个已经绕过了proxy了，直接通过obj
+ 如果我们希望对这个对象的所有属性操作，包括_name，
+ 是经过代理，这就没办法实现了。
+
+ 解决：让obj里面的return this._name这个this变成代理对象，而不是obj对象
+
+ */
+
+
+ const objProxy = new Proxy(obj, {
+   //这里receiver就是代理对象objProxy
+  get: function(target, key, receiver){
+    console.log(objProxy === receiver);//true
+    console.log("get方法被访问--------", key, receiver)
+    return Reflect.get(target, key, receiver)
+    //receiver--》改变元对象的get方法里面的this
+    //这里的Reflect的get方法里面的receiver是会改变调用obj的get方法里面的this的值的
+    //本来是obj，传了receiver之后，this就变成了receiver
+    //然后就变成了objProxy._name，这样就会再次来到捕获器的get方法
+    //get就会被访问两次
+
+  },
+  set: function(target, key, newValue, receiver){
+    console.log("set方法被访问--------", key)
+    Reflect.set(target, key, newValue, receiver)
+  }
+})
+
+console.log(objProxy.name)
+//get方法被访问-------- name Proxy {_name: 'why'}
+//get方法被访问-------- _name Proxy {_name: 'why'}
+
+
+objProxy.name = "coderrrr"
+//set方法被访问-------- name
+//set方法被访问-------- _name
+```
+
+### 5.Reflect中construct作用
+
+```js
+function Student(name, age){
+  this.name = name;
+  this.age = age
+}
+
+function Teacher(){
+
+}
+
+const stu = new Student("why", 18);
+console.log(stu);//Student类型
+console.log(stu.__proto__ === Student.prototype);//true
+
+/* 
+
+我们希望new出来的stu的执行Student函数中的内容,
+ 但是创建出来对象是Teacher对象
+*/
+
+const testStu =  new Student("why", 18);
+ testStu.__proto__ = Teacher.prototype;
+console.log(testStu);
+console.log(testStu.__proto__ === Teacher.prototype)
+
+const teacher = Reflect.construct(Student, ["why", 18], Teacher)
+console.log(teacher)//Teacher
+console.log(teacher.__proto__ === Teacher.prototype)
+```
+
+
+
+# 14 响应式原理
+
+## 14.1 什么是响应式
+
+![alt](img/81.PNG)
+
+## 14.2 响应式函数设计
+
+![alt](img/82.PNG)
+
+![alt](./img/83.PNG)
+
+```js
+// 封装一个响应式的函数
+let reactiveFns = []
+function watchFn(fn) {
+  reactiveFns.push(fn)
+}
+
+// 对象的响应式
+const obj = {
+  name: "why",
+  age: 18
+}
+
+watchFn(function() {
+  const newName = obj.name
+  console.log("你好啊, 李银河")
+  console.log("Hello World")
+  console.log(obj.name) // 100行
+})
+
+watchFn(function() {
+  console.log(obj.name, "demo function -------")
+})
+
+function bar() {
+  console.log("普通的其他函数")
+  console.log("这个函数不需要有任何响应式")
+}
+
+obj.name = "kobe"
+reactiveFns.forEach(fn => {
+  fn()
+})
+
+```
+
+## 14.3 依赖收集类的封装
+
+![alt](./img/84.png)
+
+```js
+class Depend {
+  constructor() {
+    this.reactiveFns = []
+  }
+
+  addDepend(reactiveFn) {
+    this.reactiveFns.push(reactiveFn)
+  }
+
+  notify() {
+    this.reactiveFns.forEach(fn => {
+      fn()
+    })
+  }
+}
+
+// 封装一个响应式的函数
+const depend = new Depend()
+function watchFn(fn) {
+  depend.addDepend(fn)
+}
+
+// 对象的响应式
+const obj = {
+  name: "why", // depend对象
+  age: 18 // depend对象
+}
+
+watchFn(function() {
+  const newName = obj.name
+  console.log("你好啊, 李银河")
+  console.log("Hello World")
+  console.log(obj.name) // 100行
+})
+
+watchFn(function() {
+  console.log(obj.name, "demo function -------")
+})
+
+obj.name = "kobe"
+depend.notify()
+
+```
+
+## 14.4 自动监听对象变化
+
+ 那么我们接下来就可以通过之前学习的方式来监听对象的变量：
+
+方式一：通过 Object.defineProperty的方式（vue2采用的方式）；
+
+方式二：通过new Proxy的方式（vue3采用的方式）；
+
+```js
+class Depend {
+  constructor() {
+    this.reactiveFns = []
+  }
+
+  addDepend(reactiveFn) {
+    this.reactiveFns.push(reactiveFn)
+  }
+
+  notify() {
+    this.reactiveFns.forEach(fn => {
+      fn()
+    })
+  }
+}
+
+// 封装一个响应式的函数
+const depend = new Depend()
+function watchFn(fn) {
+  depend.addDepend(fn)
+}
+
+// 对象的响应式
+const obj = {
+  name: "why", // depend对象
+  age: 18 // depend对象
+}
+
+// 监听对象的属性变量: Proxy(vue3)/Object.defineProperty(vue2)
+const objProxy = new Proxy(obj, {
+  get: function(target, key, receiver) {
+    return Reflect.get(target, key, receiver)
+  },
+  set: function(target, key, newValue, receiver) {
+    Reflect.set(target, key, newValue, receiver)
+    depend.notify()
+  }
+})
+
+watchFn(function() {
+  const newName = objProxy.name
+  console.log("你好啊, 李银河")
+  console.log("Hello World")
+  console.log(objProxy.name) // 100行
+})
+
+watchFn(function() {
+  console.log(objProxy.name, "demo function -------")
+})
+
+watchFn(function() {
+  console.log(objProxy.age, "age 发生变化是需要执行的----1")
+})
+
+watchFn(function() {
+  console.log(objProxy.age, "age 发生变化是需要执行的----2")
+})
+
+objProxy.name = "kobe"
+objProxy.name = "james"
+objProxy.name = "curry"
+
+objProxy.age = 100
+
+```
+
+## 14.5 依赖收集的管理
+
+![alt](./img/85.PNG)
 
