@@ -1,5 +1,11 @@
 
 
+
+
+
+
+
+
 # **JS额外知识补充**
 
 ## 1.with语句
@@ -6201,7 +6207,7 @@ sum("abc", "cba")
 
 
 
-# 9.ES6知识点
+# 9.ES6知识点(2015)
 
 
 
@@ -7124,15 +7130,671 @@ console.log(sa === sc)//true
 
 ```
 
+## 9.11 Set
+
+数据结构：存放数据的方式
+
+### 9.11.1 Set的基本使用
+
+![alt](img/96.PNG)
+
+```js
+// 1.创建Set结构
+const set = new Set();
+set.add(10);
+set.add(20);
+set.add(30);
+set.add(40);
+set.add(10);
+console.log(set);
+
+//set 结合 --》不允许数据的重复
+//Set(4) {10, 20, 30, 40}
 
 
-# 10 ES6
+// 2.添加对象时特别注意:
+set.add({});
+set.add({});
+console.log(set);
+//Set(6) {10, 20, 30, 40, {…}, …}
+//两个空对象对应两个不同的内存地址，因此不是重复的数据
+
+
+const obj = {}
+set.add(obj)
+set.add(obj)
+
+console.log(set)
+//Set(7) {10, 20, 30, 40, {…},{…},{…}}
+//这时候obj是重复的，只能往set里面加一个
+
+// 3.对数组去重(去除重复的元素)
+const arr = [33, 10, 26, 30, 33, 26]
+//const newArr = [];
+/* for(let item of arr){
+  console.log(newArr.indexOf(item));
+  if(newArr.indexOf(item) == -1){
+    newArr.push(item);
+  }
+} */
+//console.log(newArr);//(4) [33, 10, 26, 30]
+
+//https://www.runoob.com/jsref/jsref-indexof-array.html
+
+
+const arrSet = new Set(arr);
+//可以放一个可迭代的对象作为参数
+
+console.log(arrSet);
+//Set(4) {33, 10, 26, 30}
+
+//如果想转换为一个数组的话
+ //方法1：Array.from将类数组对象或可迭代对象转化为数组。
+const newArr = Array.from(arrSet)
+
+console.log(newArr);
+//(4) [33, 10, 26, 30]
+
+//方法2：展开语法（构造数组时）
+const newArr2 = [...arrSet]
+console.log(newArr2);
+//(4) [33, 10, 26, 30]
+
+
+```
 
 
 
 
 
-# 11 ES6-7
+### 9.11.2 Set的常见方法
+
+
+
+![alt](./img/97.PNG)
+
+
+
+```js
+const set = new Set()
+
+set.add(10)
+set.add(20)
+set.add(40)
+set.add(333)
+
+// 1.size属性 返回Set中元素的个数；
+
+console.log(set.size);//4
+
+
+// 2.Set的方法
+
+//add
+set.add(100);
+console.log(set);
+//Set(5) {10, 20, 40, 333, 100}
+
+
+//delete
+//把元素传进去
+set.delete(40);
+console.log(set);
+//Set(4) {10, 20, 333, 100}
+
+//has  有没有包含某个元素
+console.log(set.has(100)) //true
+
+
+//clear
+//set.clear()
+console.log(set);//Set(0) {size: 0}
+
+
+//3.对Set进行遍历
+//forEach(callback, [, thisArg])：通过forEach遍历set；
+
+set.forEach(item =>{
+  console.log(item);
+})
+
+for( const item of set){
+  console.log(item);
+}
+
+```
+
+## 9.12 WeakSet
+
+### 9.12.1 WeakSet的使用
+
+![alt](img/98.PNG)
+
+
+
+```
+强引用就是一个小孩A牵着一条狗，他们之间通过狗链儿连着
+
+弱引用就是，旁边有个小孩B指着A牵的狗，说：嘿，那有条狗，B指向那条狗，但他们之间没有是指绑在一起的东西
+
+当A放开狗链，狗就会跑掉（被垃圾回收），无论B是不是还指着
+
+但是，当B不再指着那条狗，狗还被A牵着，不会影响它是否跑掉
+```
+
+
+
+
+
+
+
+1. 区别1
+
+```js
+// 1.区别一: 只能存放对象类型,不能存放基本数据类型
+
+// Uncaught TypeError: Invalid value used in weak set
+//weakSet.add(1)
+```
+
+
+
+2. 区别2
+
+   区别二: weakSet对对象是一个弱引用
+
+   什么什么叫做弱引用?
+
+   (1)原来对象在内存如果不再用，会被GC回收掉
+
+   let obj = { 
+
+    name: "why"
+
+   }
+
+   obj不会被回收掉，因为obj指这这个对象。
+
+   只要时从根对象开始，能找到某个对象，这个对象就不会被回收掉。
+
+   {name：“why”}有个内存地址ox100，有个引用指向它，就是obj。通过let或者const创建出来的变量名称，是在VE里面，在ES5以前，VO对应的GO看成时根对象。但是有了VE之后，VE对应的_VARIABLE,这个对象可以看成时根对象，这里的obj看成是在VE-》variable_里面，es5之前VO里面的GO是根对象，es5之后，VE里面的variable_是根对象。
+
+   根对象里面有个obj的属性指着（引用）这堆内存里面0x100地址的这个对象。
+
+   垃圾回收期会不定时查看当前有哪些对象没有引用指向它，没有的话，这个对象到时候会被销毁掉。
+
+   当前ox100这个地址的对象是不会被GC回收掉的，因为从根对象开始，有个引用指着它.
+
+   ![alt](img/100.PNG)
+
+(2)
+
+let obj = { 
+
+ name: "why",
+
+ friend:{
+
+  name : "kobe"
+
+ }
+
+}
+
+从根对象有引用指向ox100这个对象，所以ox100这个对象不会被销毁,
+
+在ox100这个对象里面有个引用指向ox200这个对象，所以ox200这个对象也不会被销毁
+
+这种情况，这两个对象都是不会被销毁的。
+
+![alt](img/101.PNG)
+
+如果让obj.friend = null，这就意味着ox100里面的friend的值已经不是ox200了，叫做null了，对ox200的指向已经不存在了。可以把null理解成内存里面0x0的地方。这个空的地址。ox200就会被回收掉。
+
+如果obj=null，意味着，ve里面的variable_里面的obj指向空地址oxo，ox100这个对象也会被回收掉。
+
+回到最初，obj的指向ox100的这种引用，成为强引用（strong reference）.在GC准备回收这个东西的时候，认为obj指向ox100这个线是有效的。
+
+弱引用叫做weak reference,虽然可能有一条引用，比如info也保存的是ox200, 然后我通过某种办法，让指向ox200这个对象的线是弱引用。GC是不会根据弱引用这条线判断的，就算有弱引用，没有强引用，也会被回收掉。
+
+可以通过弱引用使用对象里面的东西，打印里面的东西。
+
+![alt](img/102.PNG)
+
+(3)可以把对象放到weakSet里面，但是创建出来的实例对对象的引用时弱引用。
+
+但是，set创建出来的实例对象对对象时强引用。
+
+set：内存表现
+
+这里的obj在VE里面。这时候，VE的variable_里面的属性obj指向ox100这个对象，所以ox100这个对象是不会被销毁的。接下来，new了一个新的set对象，set对象也是一个对象，地址时ox200。
+
+然后：set.add(obj), 不是直接把obj对象里面的内容放到set指向的对象里，而是把obj这个对象的地址放到set指向的这个对象里面。这时候，就多了一个引用，就是set指向的这个对象指向ox100. 这时候，这个ox100就相当于有两个被引用，
+
+![alt](img/103.PNG)
+
+
+
+如果这时候让 obj = null, 相当于obj不再指向ox100这个对象，那么ox100这个对象会不会被销毁掉？
+
+是不会被销毁掉的，因为从set出发，也是从根对象出发，（VE的variable_里面的属性set）出发，有对ox100的引用。
+<img src="img/104.PNG" alt="alt" style="zoom:50%;" />
+
+因为0x100不会被销毁，所以set对对象的引用时一种强引用。
+
+(4) 如果时weakSet创建出来的对象，
+
+```js
+let obj = { 
+  name: "why"
+}
+const weakSet = new weakSet()
+// 建立的是弱引用
+weakSet.add(obj)
+```
+
+黄色的地方就变成了弱引用，如果obj=null，对ox100的引用也不存在了，那么GC到时候就会回收ox100这个对象
+<img src="img/105.PNG" alt="alt" style="zoom:50%;" />
+
+
+
+
+### 9.12.2 WeakSet的应用
+
+![alt](img/99.PNG)
+
+```js
+// 3.WeakSet的应用场景
+const personSet = new WeakSet()
+class Person {
+  constructor() {
+    personSet.add(this)
+  }
+
+  running() {
+    if (!personSet.has(this)) {
+      throw new Error("不能通过非构造方法创建出来的对象调用running方法")
+    }
+    console.log("running~", this)
+  }
+}
+
+let p = new Person()
+p.running()
+p = null
+
+p.running.call({name: "why"})
+```
+
+为什么不能用set
+
+```js
+// 3.WeakSet的应用场景
+const personSet = new Set()
+class Person {
+  constructor() {
+    personSet.add(this)
+  }
+
+  running() {
+    if (!personSet.has(this)) {
+      throw new Error("不能通过非构造方法创建出来的对象调用running方法")
+    }
+    console.log("running~", this)
+  }
+}
+
+let p = new Person()
+
+p.running()
+
+
+p.running.call({name: "why"})
+
+//p = null
+//为什么不能用set呢
+//personSet.add(this)
+//this(创建出来的p实例)会被强引用，如果有一天p=null，那么p指向的那个对象也不会被销毁
+//因为被personSet强引用，
+//这个p指向的对象不会被销毁的
+//导致===》就算想销毁p也销毁不掉
+//只能p=null之后，personSet.delete(p),才能让p指向的对象被回收
+
+```
+
+## 9.13 Map
+
+### 9.13.1 为什么要使用map
+
+es5之前对象的key只能使用字符串，就算不加双引号，在底层实现的时候也是字符串。es6之后，可以使用symbol类型作为key值。总结就是：对象的key只能使用字符串或者symbol。但是对象的value可以是任何类型。
+
+```js
+// 1.JavaScript中对象中是不能使用对象来作为key的
+const obj1 = { name: "why" }
+const obj2 = { name: "kobe" }
+
+ const info = {
+
+[obj1]: "aaa",
+[obj2]: "bbb"
+
+ }
+
+ console.log(info)
+ //[object Object]: "bbb"
+
+ //当把obj1作为key的时候，会把obj1转换为一个字符串格式
+ //obj1转成字符串之后就是[object object]
+ console.log(obj1.toString());//[object Object]
+ //obj2的key会把前面的覆盖掉
+```
+
+
+
+### 9.13.2 **Map的基本使用**
+
+![alt](img/106.PNG)
+
+ Map这种数据结构就是允许我们对象类型或者其他类型来作为key的。
+
+ES6 提供了 Map 数据结构。它类似于对象，也是键值对的集合，但是“键”的范围不限于字符串，各种类型的值（包括对象）都可以当作键。也就是说，Object 结构提供了“字符串—值”的对应，Map 结构提供了“值—值”的对应，是一种更完善的 Hash 结构实现。如果你需要“键值对”的数据结构，Map 比 Object 更合适。
+
+```js
+// 2.Map就是允许我们对象类型来作为key的
+
+const obj1 = { name: "why" }
+const obj2 = { name: "kobe" }
+const map = new Map()
+map.set(obj1, "aaa")
+map.set(obj2, "bbb")
+console.log(map);
+//Map(2) {{…} => 'aaa', {…} => 'bbb'}
+map.set(1, "ccc")
+//也可以使用基本数据类型作为key
+
+// 构造方法的使用
+//作为构造函数，Map 也可以接受一个数组作为参数。该数组的成员是一个个表示键值对的数组。
+//new Map([[key, value], [key,value], [key,value]])
+const map2 = new Map([[obj1, "aaa"], [obj2, "bbb"], [2, "ddd"]])
+console.log(map2)
+//Map(3) {{…} => 'aaa', {…} => 'bbb', 2 => 'ddd'}
+```
+
+
+
+### 9.13.3 Map的常用方法
+
+
+![alt](img/107.PNG)
+
+```js
+//3.常见的属性和方法
+
+//size：返回Map中元素的个数；
+const obj1 = { name: "why" }
+const obj2 = { name: "kobe" }
+
+const map2 = new Map([[obj1, "aaa"], [obj2, "bbb"], [2, "ddd"]])
+console.log(map2.size);//3
+
+//set(key, value)：在Map中添加key、value，并且返回整个Map对象；
+map2.set("why", "eee")
+console.log(map2)//Map(4) {{…} => 'aaa', {…} => 'bbb', 2 => 'ddd', 'why' => 'eee'}
+console.log(map2.set("why", "eee"));
+//Map(4) {{…} => 'aaa', {…} => 'bbb', 2 => 'ddd', 'why' => 'eee'}
+
+//get(key)：根据key获取Map中的value；
+console.log(map2.get("why"))//eee
+console.log(map2.get(obj1))//aaa
+
+//has(key)：判断是否包括某一个key，返回Boolean类型；
+console.log(map2.has("why"))//true
+console.log(map2.has(obj1))//true
+
+//delete(key)：根据key删除一个键值对，返回Boolean类型；
+map2.delete("why")
+console.log(map2)
+//Map(3) {{…} => 'aaa', {…} => 'bbb', 2 => 'ddd'}
+
+//clear()：清空所有的元素；
+ //map2.clear()
+console.log(map2)
+//Map(0) {size: 0}
+
+
+// 4.遍历map
+//forEach(callback, [, thisArg])：通过forEach遍历Map；
+map2.forEach((item, key) => {
+  console.log(item, key);
+})
+
+for(const item of map2){
+  console.log(item);//遍历出来三个数组，每个数组里面放着key和value
+  console.log(item[0], item[1]);
+}
+
+//遍历的同时进行结构
+for(const [key, value] of map2){
+  console.log(key, value);
+}
+
+
+```
+
+##  9.14 WeakMap
+
+### 9.14.1 WeakMap的使用
+
+![alt](img/108.PNG)
+
+1. 区别1：
+
+WeakSet只能存放对象
+
+WeakMap的key只能时对象，Map的key可以是对象或者普通数据类型
+
+
+
+2. 区别2：
+
+<img src="img/110.PNG" alt="alt" style="zoom:50%;" />
+
+map时强引用类型，就算obj=null，也不会销毁ox100. 如果换成了weakmap，就变成了弱引用，当obj=null的时候，ox100也会被销毁。
+
+```js
+const obj = {name: "obj1"}
+// 1.WeakMap和Map的区别二:
+const map = new Map()
+map.set(obj, "aaa")
+
+const weakMap = new WeakMap()
+weakMap.set(obj, "aaa")
+
+// 2.区别一: 不能使用基本数据类型
+// weakMap.set(1, "ccc")
+
+// 3.常见方法
+// get方法
+console.log(weakMap.get(obj))//aaa
+
+// has方法
+console.log(weakMap.has(obj))//true
+console.log(weakMap)
+// delete方法
+console.log(weakMap.delete(obj))//true
+
+// WeakMap { <items unknown> }
+console.log(weakMap) //因为weakMap不可以遍历
+```
+
+
+
+###  9.14.2 WeakMap的应用
+
+![alt](img/109.PNG)
+
+14_响应式原理中的WeakMap使用
+
+响应式就是监听对象属性的改变，并且执行某些函数做出对应的响应，这个就是vue3响应式原理里面做的事情。
+
+![alt](img/111.PNG)
+
+```js
+// 应用场景(vue3响应式原理)
+const obj1 = {
+  name: "why",
+  age: 18
+}
+
+function obj1NameFn1() {
+  console.log("obj1NameFn1被执行")
+}
+
+function obj1NameFn2() {
+  console.log("obj1NameFn2被执行")
+}
+
+function obj1AgeFn1() {
+  console.log("obj1AgeFn1")
+}
+
+function obj1AgeFn2() {
+  console.log("obj1AgeFn2")
+}
+
+const obj2 = {
+  name: "kobe",
+  age: 30,
+  address: "广州市"
+}
+
+function obj2NameFn1() {
+  console.log("obj1NameFn1被执行")
+}
+
+function obj2NameFn2() {
+  console.log("obj1NameFn2被执行")
+}
+
+
+function obj2AgeFn1() {
+  console.log("obj2AgeFn1")
+}
+
+function obj2AgeFn2() {
+  console.log("obj2AgeFn2")
+}
+
+
+/* 
+
+我们想要obj1.name属性改变的时候，执行obj1NameFn1和obj1NameFn2
+我们想要obj1.age属性改变的时候，执行obj1AgeFn1和obj1AgeFn2
+我们想要obj2.name属性改变的时候，执行obj2NameFn1和obj2NameFn2
+我们想要obj2.age属性改变的时候，执行obj2AgeFn1和obj2AgeFn2
+
+如何把数据之间通过某种数据结构关联到一起。
+想到对应、映射关系。
+
+
+
+*/
+
+//weakmap的key只能时对象
+
+// 1.创建WeakMap
+const weakMap = new WeakMap()
+
+// 2.收集依赖结构
+// 2.1.对obj1收集的数据结构
+const obj1Map = new Map()
+obj1Map.set("name", [obj1NameFn1, obj1NameFn2]);
+obj1Map.set("age", [obj1AgeFn1, obj1AgeFn2]);
+weakMap.set(obj1, obj1Map)
+
+// 2.2.对obj2收集的数据结构
+
+const obj2Map = new Map()
+obj2Map.set("name", [obj2NameFn1, obj2NameFn2]);
+obj2Map.set("age", [obj2AgeFn1, obj2AgeFn2]);
+weakMap.set(obj2, obj2Map)
+
+// 3.如果obj1.name发生了改变
+// Proxy/Object.defineProperty
+
+obj1.name = "james";
+const targetMap = weakMap.get(obj1);
+const fns = targetMap.get("name")
+fns.forEach(item => item())
+
+/* 
+
+这里为什么要使用weakmap
+是因为weakmap时弱引用
+当我们想销毁obj1的时候，obj1 = null；
+因为weakmap时弱引用，所以会被GC回收和销毁，如果是map的话，就不可以了
+
+
+*/
+
+```
+
+![alt](img/112.PNG)
+
+
+
+# 10 ES7(2016)
+
+## 10.1 **Array Includes**
+
+在ES7之前，如果我们想判断一个数组中是否包含某个元素，需要通过 indexOf 获取结果，并且判断是否为 -1。 
+
+在ES7中，我们可以通过includes来判断一个数组中是否包含一个指定的元素，根据情况，如果包含则返回 true，
+
+否则返回false。
+
+```js
+const names = ["abc", "cba", "nba", "mba", NaN]
+
+if (names.indexOf("cba") !== -1) {
+  console.log("包含abc元素")
+}
+
+// ES7 ES2016
+if (names.includes("cba", 2)) {
+  console.log("包含abc元素")
+}
+//第二个参数时从第几个开始判断有没有包含
+
+//indexOf和includes的区别在于对于NaN的判断
+
+if (names.indexOf(NaN) !== -1) {
+  console.log("包含NaN111111") //不能判断
+}
+
+if (names.includes(NaN)) {
+  console.log("包含NaN") //可以判断
+}
+```
+
+## 10.2 **指数(乘方) exponentiation运算符**
+
+
+
+在ES7之前，计算数字的乘方需要通过 Math.pow 方法来完成。
+
+在ES7中，增加了 ** 运算符，可以对数字来计算乘方
+
+```js
+const result1 = Math.pow(2, 3)
+// ES7: **
+const result2 = 2 ** 3
+console.log(result1, result2)//8 8
+```
+
+
+
+# 11 ES7
 
 
 
@@ -7747,4 +8409,2324 @@ objProxy.age = 100
 ## 14.5 依赖收集的管理
 
 ![alt](./img/85.PNG)
+
+```js
+  class Depend {
+    constructor() {
+      this.reactiveFns = []
+    }
+
+    addDepend(reactiveFn) {
+      this.reactiveFns.push(reactiveFn)
+    }
+
+    notify() {
+      this.reactiveFns.forEach(fn => {
+        fn()
+      })
+    }
+  }
+
+
+
+
+  // 对象的响应式
+  const obj1 = {
+    name: "why", // depend对象
+    age: 18 // depend对象
+  };
+  const obj2 = {
+    name: "kobe", // depend对象
+    age: 32 // depend对象
+  };
+
+  const weakMap = new WeakMap();
+
+  function setDepend(target, key) {
+    let targetMap = weakMap.get(target);
+    if (!targetMap) {
+      targetMap = new Map();
+      weakMap.set(target, targetMap);
+    }
+    let depend = targetMap.get(key);
+    if (!depend) {
+      depend = new Depend();
+      targetMap.set(key, depend)
+    }
+    return depend
+  }
+
+
+
+ /*  const objProxy = new Proxy(obj1, {
+    get: function (target, key, receiver) {
+      return Reflect.get(target, key, receiver)
+    },
+    set: function (target, key, newVaule, receiver) {
+      Reflect.set(target, key, newVaule, receiver);
+      setDepend(target, key).notify();
+    }
+  }) */
+
+  //forEach没有返回值，map有
+  let [obj1Proxy, obj2Proxy] =  [obj1, obj2].map(item => {
+  return  new Proxy(item, {
+      get: function (target, key, receiver) {
+        return Reflect.get(target, key, receiver)
+      },
+      set: function (target, key, newVaule, receiver) {
+        Reflect.set(target, key, newVaule, receiver);
+        setDepend(target, key).notify();
+      }
+    })
+  });
+
+
+
+
+
+  function obj1NameFn1() {
+    console.log(obj1Proxy.name);
+    console.log("obj1NameFn1被执行")
+  }
+
+  function obj1NameFn2() {
+    console.log("obj1NameFn2被执行")
+  }
+
+  function obj1AgeFn1() {
+    console.log("obj1AgeFn1被执行")
+  }
+
+  function obj1AgeFn2() {
+    console.log("obj1AgeFn2被执行")
+  }
+
+  
+function obj2NameFn1() {
+  console.log("obj2NameFn1被执行")
+}
+
+function obj2NameFn2() {
+  console.log("obj2NameFn2被执行")
+}
+
+
+function obj2AgeFn1() {
+  console.log("obj2AgeFn1")
+}
+
+function obj2AgeFn2() {
+  console.log("obj2AgeFn2")
+}
+
+  function watchFn(target, key, ...fns) {
+    fns.forEach(item => {
+      setDepend(target, key).addDepend(item);
+    })
+  }
+
+  watchFn(obj1, "name", obj1NameFn1, obj1NameFn2);
+
+  watchFn(obj1, "age", obj1AgeFn1, obj1AgeFn2 )
+
+  watchFn(obj2, "name", obj2NameFn1, obj2NameFn2);
+
+  watchFn(obj2, "age", obj2AgeFn1, obj2AgeFn2 )
+
+
+
+  obj1Proxy.name = "coder";
+  obj1Proxy.age = 118;
+  obj2Proxy.name = "jiff";
+  obj2Proxy.age = 89;
+
+  console.log(obj2Proxy.age);
+```
+
+## 14.6 正确的收集依赖
+
+![alt](img/113.PNG)
+
+上面时通过watchFn(obj1, "name", obj1NameFn1, obj1NameFn2);这个方法，手动的为obj1的name属性添加了方法obj1NameFn1和obj1NameFn2， 我们想着就是不手动添加这个，就是自动的往weakMap的obj1的map的“name”里面添加方法。函数里面有obj1Proxy.name的就放到obj1->name的数组中去。有obj1Proxy.age的就放到obj1->age的数组(this.reactiveFns)中去.
+
+```js
+  class Depend {
+    constructor() {
+      this.reactiveFns = []
+    }
+
+    addDepend(reactiveFn) {
+      this.reactiveFns.push(reactiveFn)
+    }
+
+    notify() {
+      this.reactiveFns.forEach(fn => {
+        fn()
+      })
+    }
+  }
+
+
+
+
+  // 对象的响应式
+  const obj1 = {
+    name: "why", // depend对象
+    age: 18 // depend对象
+  };
+  const obj2 = {
+    name: "kobe", // depend对象
+    age: 32 // depend对象
+  };
+
+  const weakMap = new WeakMap();
+
+  function setDepend(target, key) {
+    let targetMap = weakMap.get(target);
+    if (!targetMap) {
+      targetMap = new Map();
+      weakMap.set(target, targetMap);
+    }
+    let depend = targetMap.get(key);
+    if (!depend) {
+      depend = new Depend();
+      targetMap.set(key, depend)
+    }
+    return depend
+  }
+
+
+
+ /*  const objProxy = new Proxy(obj1, {
+    get: function (target, key, receiver) {
+      return Reflect.get(target, key, receiver)
+    },
+    set: function (target, key, newVaule, receiver) {
+      Reflect.set(target, key, newVaule, receiver);
+      setDepend(target, key).notify();
+    }
+  }) */
+
+  //forEach没有返回值，map有
+  let [obj1Proxy, obj2Proxy] =  [obj1, obj2].map(item => {
+  return  new Proxy(item, {
+      get: function (target, key, receiver) {
+        if(activeReactiveFn){
+          console.log('watchFn内的调用');
+          setDepend(target, key).addDepend(activeReactiveFn);
+        }
+        return Reflect.get(target, key, receiver)
+      },
+      set: function (target, key, newVaule, receiver) {
+        Reflect.set(target, key, newVaule, receiver);
+        setDepend(target, key).notify();
+      }
+    })
+  });
+
+
+  function obj1NameFn1() {
+    console.log(obj1Proxy.name + " obj1NameFn1被执行 ")
+    console.log(obj2Proxy.name + " obj1NameFn1被执行 ")
+  }
+
+  function obj1NameFn2() {
+    console.log(obj1Proxy.name + " obj1NameFn2被执行 ")
+  }
+
+  function obj1AgeFn1() {
+    console.log(obj1Proxy.age + " obj1AgeFn1被执行 ")
+  }
+
+  function obj1AgeFn2() {
+    console.log(obj1Proxy.age + " obj1AgeFn2被执行 ")
+  }
+
+  function obj2NameFn1() {
+    console.log(obj2Proxy.name + " obj2NameFn1被执行 ")
+  }
+
+  function obj2NameFn2() {
+    console.log(obj2Proxy.name + " obj2NameFn2被执行 ")
+  }
+
+  function obj2AgeFn1() {
+    console.log(obj2Proxy.age + " obj2AgeFn1被执行 ")
+  }
+
+  function obj2AgeFn2() {
+    console.log(obj2Proxy.age + " obj2AgeFn2被执行 ")
+  }
+
+let activeReactiveFn = null;
+function watchFn(fn) {
+  activeReactiveFn = fn;
+  fn();
+  activeReactiveFn = null;
+}
+/* 
+给各个函数分配到obj1/obj2的map里面
+*/
+watchFn(obj1NameFn1);
+watchFn(obj1NameFn2);
+
+watchFn(obj1AgeFn1);
+watchFn(obj1AgeFn2);
+
+
+watchFn(obj2NameFn1);
+watchFn(obj2NameFn2);
+
+watchFn(obj2AgeFn1);
+watchFn(obj2AgeFn2);
+
+
+
+console.log('-----------------------------------------');
+
+
+
+console.log(obj1Proxy.name);
+obj1Proxy.name = "coder";
+obj2Proxy.name = "test";
+
+
+
+
+/* 
+obj1Proxy.age = 118;
+
+obj2Proxy.age = 89;
+
+console.log(obj2Proxy.age); */
+
+```
+
+##  14.7 对Depend类重构
+
+![alt](img/114.PNG)
+
+我们不想让get里面知道有activeReactiveFn这个东西
+
+```js
+ get: function (target, key, receiver) {
+        if(activeReactiveFn){
+          console.log('watchFn内的调用');
+          setDepend(target, key).addDepend(activeReactiveFn);
+        }
+```
+
+```js
+    // 保存当前需要收集的响应式函数
+let activeReactiveFn = null
+
+/**
+ * Depend优化:
+ *  1> depend方法
+ *  2> 使用Set来保存依赖函数, 而不是数组[]
+ */
+
+ class Depend {
+    constructor() {
+      this.reactiveFns = new Set()
+    }
+
+/*     addDepend(reactiveFn) {
+      this.reactiveFns.add(reactiveFn)
+    } */
+
+    depend() {
+      if(activeReactiveFn){
+         // console.log('watchFn内的调用');
+          this.reactiveFns.add(activeReactiveFn)
+        }
+    }
+
+    notify() {
+      this.reactiveFns.forEach(fn => {
+        fn()
+      })
+    }
+  }
+
+
+
+
+  // 对象的响应式
+  const obj1 = {
+    name: "why", // depend对象
+    age: 18 // depend对象
+  };
+  const obj2 = {
+    name: "kobe", // depend对象
+    age: 32 // depend对象
+  };
+
+  const weakMap = new WeakMap();
+
+  function setDepend(target, key) {
+    let targetMap = weakMap.get(target);
+    if (!targetMap) {
+      targetMap = new Map();
+      weakMap.set(target, targetMap);
+    }
+    let depend = targetMap.get(key);
+    if (!depend) {
+      depend = new Depend();
+      targetMap.set(key, depend)
+    }
+    return depend
+  }
+
+
+
+ /*  const objProxy = new Proxy(obj1, {
+    get: function (target, key, receiver) {
+      return Reflect.get(target, key, receiver)
+    },
+    set: function (target, key, newVaule, receiver) {
+      Reflect.set(target, key, newVaule, receiver);
+      setDepend(target, key).notify();
+    }
+  }) */
+
+  //forEach没有返回值，map有
+  let [obj1Proxy, obj2Proxy] =  [obj1, obj2].map(item => {
+  return  new Proxy(item, {
+      get: function (target, key, receiver) {
+        setDepend(target, key).depend();
+        return Reflect.get(target, key, receiver)
+      },
+      set: function (target, key, newVaule, receiver) {
+        Reflect.set(target, key, newVaule, receiver);
+        setDepend(target, key).notify();
+      }
+    })
+  });
+
+
+function watchFn(fn) {
+  activeReactiveFn = fn;
+  fn();
+  activeReactiveFn = null;
+}
+
+// watchFn
+watchFn(() => {
+  console.log(obj1Proxy.name, "-------")
+  console.log(obj1Proxy.name, "+++++++")
+})
+//如果不用set的话，一个函数会被往数组里面加2次。如果一个函数里面有三个obj1Proxy.name，则会被加3次，一次类推
+
+obj1Proxy.name = "kobe";
+obj2Proxy.name = "test";
+/* 
+
+test.html:150 why -------
+test.html:151 why +++++++
+test.html:150 kobe -------
+test.html:151 kobe +++++++
+*/
+
+
+```
+
+## 14.8 对象的响应式操作vue3
+
+把一个对象封装成响应式的
+
+我们目前的响应式是针对于obj一个对象的，我们可以创建出来一个函数，针对所有的对象都可以变成响应式对象：
+
+```js
+  // 保存当前需要收集的响应式函数
+let activeReactiveFn = null
+
+/**
+ * Depend优化:
+ *  1> depend方法
+ *  2> 使用Set来保存依赖函数, 而不是数组[]
+ */
+
+ class Depend {
+    constructor() {
+      this.reactiveFns = new Set()
+    }
+
+    depend() {
+      if(activeReactiveFn){
+         // console.log('watchFn内的调用');
+          this.reactiveFns.add(activeReactiveFn)
+        }
+    }
+
+    notify() {
+      this.reactiveFns.forEach(fn => {
+        fn()
+      })
+    }
+  }
+
+  const weakMap = new WeakMap();
+
+  function setDepend(target, key) {
+    let targetMap = weakMap.get(target);
+    if (!targetMap) {
+      targetMap = new Map();
+      weakMap.set(target, targetMap);
+    }
+    let depend = targetMap.get(key);
+    if (!depend) {
+      depend = new Depend();
+      targetMap.set(key, depend)
+    }
+    return depend
+  }
+
+
+function reactive(obj) {
+  return  new Proxy(obj, {
+      get: function (target, key, receiver) {
+        setDepend(target, key).depend();
+        return Reflect.get(target, key, receiver)
+      },
+      set: function (target, key, newVaule, receiver) {
+        Reflect.set(target, key, newVaule, receiver);
+        setDepend(target, key).notify();
+      }
+    })
+
+}
+
+function watchFn(fn) {
+  activeReactiveFn = fn;
+  fn();
+  activeReactiveFn = null;
+}
+
+
+
+ // 对象的响应式
+ const obj1 = {
+    name: "why", // depend对象
+    age: 18 // depend对象
+  };
+  const obj2 = {
+    name: "kobe", // depend对象
+    age: 32 // depend对象
+  };
+
+  const obj1Proxy = reactive(obj1);
+  const obj2Proxy = reactive(obj2);
+  const obj3Proxy = reactive({
+    address: "广州市",
+    height: 1.88
+  })
+
+  // watchFn
+watchFn(() => {
+  console.log(obj1Proxy.name, "-------")
+  console.log(obj1Proxy.name, "+++++++")
+})
+  obj1Proxy.name = "coderwhy"
+
+  watchFn(() => {
+  console.log(obj3Proxy.address)
+})
+
+obj3Proxy.address = "北京市";
+
+obj2Proxy.name = "test";
+console.log(obj2Proxy.name );
+
+```
+
+## 14.9 对象的响应式操作vue2
+
+使用object.definProperty
+
+![alt](img/115.PNG)
+
+```js
+ // 保存当前需要收集的响应式函数
+ let activeReactiveFn = null
+
+/**
+ * Depend优化:
+ *  1> depend方法
+ *  2> 使用Set来保存依赖函数, 而不是数组[]
+ */
+
+ class Depend {
+    constructor() {
+      this.reactiveFns = new Set()
+    }
+
+    depend() {
+      if(activeReactiveFn){
+         // console.log('watchFn内的调用');
+          this.reactiveFns.add(activeReactiveFn)
+        }
+    }
+
+    notify() {
+      this.reactiveFns.forEach(fn => {
+        fn()
+      })
+    }
+  }
+
+  const weakMap = new WeakMap();
+
+  function setDepend(target, key) {
+    let targetMap = weakMap.get(target);
+    if (!targetMap) {
+      targetMap = new Map();
+      weakMap.set(target, targetMap);
+    }
+    let depend = targetMap.get(key);
+    if (!depend) {
+      depend = new Depend();
+      targetMap.set(key, depend)
+    }
+    return depend
+  }
+
+
+function reactive(obj) {
+   Object.keys(obj).forEach(item => {
+    console.log(item);
+    let value = obj[item];
+    Object.defineProperty(obj, item, {
+      get(){
+        setDepend(obj, item).depend();
+        return value
+      },
+      set(newValue){
+        value = newValue;
+        setDepend(obj, item).notify();
+      }
+
+    })
+  })
+  return obj
+
+}
+
+function watchFn(fn) {
+  activeReactiveFn = fn;
+  fn();
+  activeReactiveFn = null;
+}
+
+
+
+ // 对象的响应式
+ const obj1 = {
+    name: "why", // depend对象
+    age: 18 // depend对象
+  };
+  const obj2 = {
+    name: "kobe", // depend对象
+    age: 32 // depend对象
+  };
+
+  const obj1Proxy = reactive(obj1);
+  const obj2Proxy = reactive(obj2);
+  const obj3Proxy = reactive({
+    address: "广州市",
+    height: 1.88
+  })
+
+  // watchFn
+watchFn(() => {
+  console.log(obj1Proxy.name, "-------")
+  console.log(obj1Proxy.name, "+++++++")
+})
+
+
+
+  obj1Proxy.name = "coderwhy"
+
+  watchFn(() => {
+  console.log(obj3Proxy.address)
+})
+
+obj3Proxy.address = "北京市";
+
+obj2Proxy.name = "test";
+console.log(obj2Proxy.name ); 
+
+```
+
+
+
+# 15 Proxy
+
+## 15.1异步任务的处理
+
+![alt](img/116.PNG)
+
+```js
+  //1.
+  // request.js
+function requestDate(url){
+  // 模拟网络请求
+  setTimeout(() =>{
+       // 拿到请求的结果
+    // url传入的是coderwhy, 请求成功
+    if(url == "coderwhy"){
+      //成功
+      let name = ["abc", "cba", "nba"];
+    }else{
+      let errMessage = "请求失败, url错误";
+    }
+  })
+}
+
+// main.js
+requestDate("kobe")
+//怎么让main.js这个文件得到网络请求name或者errMessage的结果？
+
+ //2.
+function requestDate(url){
+  // 模拟网络请求
+  setTimeout(() =>{
+       // 拿到请求的结果
+    // url传入的是coderwhy, 请求成功
+    if(url == "coderwhy"){
+      //成功
+      let name = ["abc", "cba", "nba"];
+
+      return name
+    }else{
+      let errMessage = "请求失败, url错误";
+      return errMessage
+    }
+  })
+}
+
+// main.js
+let result = requestDate("kobe")
+
+//这样子时拿不到返回结果的，因为网络请求时异步的，拿到的至于requestDate的返回结果
+//return name时setTimeOut的rutrun结果，是拿不到的
+
+
+ //3.
+//解决方法：传入对应的回调函数
+// request.js
+function requestData(url, successCallback, failtureCallback) {
+  // 模拟网络请求
+  setTimeout(() => {
+    // 拿到请求的结果
+    // url传入的是coderwhy, 请求成功
+    if (url === "coderwhy") {
+      // 成功
+      let names = ["abc", "cba", "nba"]
+      successCallback(names)
+    } else { // 否则请求失败
+      // 失败
+      let errMessage = "请求失败, url错误"
+      failtureCallback(errMessage)
+    }
+  }, 3000);
+}
+
+
+// main.js
+requestData("kobe", (res) => {
+  console.log(res)
+}, (err) => {
+  console.log(err)
+})
+
+// 更规范/更好的方案 Promise承诺(规范好了所有的代码编写逻辑)
+function requestData2() {
+  return "承诺"
+}
+
+const chengnuo = requestData2()
+```
+
+
+
+ \* 这种回调的方式有很多的弊端:
+
+ \*  1> 如果是我们自己封装的requestData,那么我们在封装的时候必须要自己设计好callback名称, 并且使用好
+
+ \*  2> 如果我们使用的是别人封装的requestData或者一些第三方库, 那么我们必须去看别人的源码或者文档, 才知道它这个函数需要怎么去获取到结果
+
+ ## 15.2 Proxy的介绍
+
+![alt](img/117.PNG)
+
+Proxy是es6里面新增的api
+
+```js
+function foo(){
+  return "承诺"
+}
+
+const chengnuo = foo()
+//当我们调用foo的时候，foo不能马上给我们一个结果的时候，
+//我们希望它给我们返回一个"承诺"
+//在这里这个"承诺"就是Promise 
+
+
+//相当于下面代码
+function foo(){
+  return new Promise()
+}
+
+const promise = foo()
+
+//相当于
+
+const promise = new Promise()
+```
+
+
+
+```js
+
+function Person(name, age){
+
+}
+
+const p = new Person("why", 18)
+
+//像是p实例一样，promise里面也可以传入参数，其中参数是一个回调函数
+//并且这个回调函数一传进去就会立刻执行
+//传入的这个函数被称为Executor
+const promise = new Promise(() => {
+  console.log("传入的函数被执行了");
+
+})
+
+/* 
+像是下面一样
+class Promise{
+  constructor(callback){
+    callback()
+
+  }
+} 
+*/
+
+//而且executor执行的时候会给你再传入一些其他的参数
+
+class PromiseTest{
+  constructor(callback){
+    let foo = function(){ 
+
+    };
+    let bar = function(){
+
+     };
+    callback(foo, bar)
+
+  }
+} 
+
+const promiseTest = new PromiseTest(() => {
+  console.log("传入的函数被执行了");
+
+})
+
+//实际promise里面，这里的foo和bar是resolve和reject
+const promise = new Promise((resolve, reject) => {
+  console.log("传入的函数被执行了");
+
+})
+
+//上面例子中的foo函数
+function foo() {
+  // Promise
+  return new Promise((resolve, reject) => {
+    resolve("success message")
+    // reject("failture message")
+  })
+}
+
+const fooPromise = foo()
+
+//返回promise之后，就是别人拿到promise之后，我们要做一些网络请求的东西
+//成功之后给我成功的结果，失败给我失败的结果
+//如果成功的话，给我调别人给我的resolve函数
+//失败的话，给我调别人给我的reject函数
+
+
+/* 
+
+在这里fooPromise只是一份承诺，不是一个结果
+需要调用fooPromise的then方法
+fooPromise.then()，并且 可以往里面再传入一个回调函数
+在里面调用resolve方法的时候，外面的fooPromise.then()方法就会被自动执行
+我们就知道这次做了一个成功的回调 
+
+里面调用reject的话，外面会自动调用fooPromise.catch()
+*/
+
+// promise.then(() => {
+
+// })
+
+// promise.catch(() => {
+
+// })
+```
+
+## 15.3 异步请求的Promise
+
+```js
+
+  //request.js
+  function requestData(url) {
+    // 异步请求的代码会被放入到executor中
+    return new Promise((resolve, reject) => {
+      // 模拟网络请求
+      setTimeout(() => {
+        // 拿到请求的结果
+        // url传入的是coderwhy, 请求成功
+        if (url === "coderwhy"){
+          //成功
+          let names = ["abc", "cba", "nba"];
+          resolve(names)
+        } else {
+          let errMessage = "请求失败, url错误";
+          reject(errMessage);
+        }
+      }, 3000)
+    } )
+  }
+
+  // main.js
+  const promise = requestData("coderwhy");
+/*   promise.then((res) => {
+    console.log("请求成功:", res)
+  })
+  promise.catch((err) => {
+    console.log("请求失败:", err)
+  }) */
+
+  /* 
+  
+  then和catch分开写会在node中报异常，
+  还有一直写法是在then里面直接传两个回调函数
+  一个是成功时候的回调，一个是失败时候的回调
+
+ then方法传入的回调函数两个回调函数:
+ 第一个回调函数, 会在Promise执行resolve函数时, 被回调
+ 第二个回调函数, 会在Promise执行reject函数时, 被回调
+  */
+
+ promise.then((res) => {
+    console.log("请求成功:", res)
+  }, (err) => {
+    console.log("请求失败:", err)
+  })
+```
+
+## 15.4 Promise的三种状态
+
+![alt](img/118.PNG)
+
+pending 
+ adj. 悬而未决的; 待定; 待决; 即将发生的; 
+
+一旦调用resolve（），就是fulfilled状态，调用reject，就是rejected状态
+
+
+
+```js
+// const promise = new Promise((resolve, reject) => {
+
+// })
+
+// promise.then(res => {
+
+// }, err => {
+
+// })
+
+// 完全等价于下面的代码
+// 注意: Promise状态一旦确定下来, 那么就是不可更改的(锁定)
+new Promise((resolve, reject) => {
+  // pending状态: 待定/悬而未决的
+  console.log("--------")
+  reject() // 处于rejected状态(已拒绝状态)
+  resolve() // 处于fulfilled状态(已敲定/兑现状态)
+  console.log("++++++++++++")
+}).then(res => {
+  console.log("res:", res)
+}, err => {
+  console.log("err:", err)
+})
+
+```
+
+## 15.4 Promise的resolve参数
+
+ \* resolve(参数)有三种情况
+
+1.  普通的值或者对象  pending -> fulfilled\* 
+
+2.  传入一个Promise, 那么当前的Promise的状态会由传入的Promise来决定, 相当于状态进行了移交
+
+```js
+ const newPromise = new Promise((resolve, reject) => {
+   resolve("aaaa")
+ })
+
+ new Promise((resolve, reject) => {
+   //状态本来应该是pending -> fulfilled
+   //但是因为传入的参数是promise，相当于状态进行了移交，
+   //当前的状态由新的promise决定，现在还是pending，直到新的promise调用了reslove或者reject
+   //新的promise执行力resolve("aaaa")
+   //下面的.then里面的东西被自动执行，参数是新的promise里面传来的东西
+   resolve(newPromise)
+ }).then(res => {
+   console.log("res:", res);
+ }, err => {
+   console.log("err", err);
+ })
+```
+
+
+
+3. 传入一个对象, 并且这个对象有实现then方法(并且这个对象是实现了thenable接口), 那么也会执行该then方法, 并且由该then方法决定后续状态
+
+ ```js
+ //传入一个对象, 这个兑现有then方法
+ new Promise((resolve, reject) => {
+    const obj = {
+     then: function(resolve, reject){
+       resolve("resolve message")
+     }
+   } 
+   resolve(obj)
+    
+ }).then(res => {
+   console.log("res:", res);
+ }, err => {
+   cconsole.log("err:", err);
+ })
+ 
+ 
+ // eatable/runable
+ const obj = {
+   eat: function() {
+ 
+   },
+   run: function() {
+ 
+   }
+ }
+ ```
+
+## 15.5 **Promise的对象方法then**
+
+* then是promise的对象方法，意味这要使用的话，首先得new一个对象，然后调用这个方法。如果是通过类名Promise直接调用一个方法，比如all方法,Promise.all(), 就是类方法，就是不用创建出新对象去访问的方法。也就是类方法是静态方法， 对象方法是在原型上的方法。
+
+* then方法是Promise对象上的一个方法：它其实是放在Promise的原型上的 Promise.prototype.then
+
+```js
+ // Promise有哪些对象方法
+  //console.log(Promise.prototype);
+  //console.log(Object.getOwnPropertyDescriptors(Promise.prototype))
+  //直接答应不出来是因为这几个属性的enumerable: false
+
+
+  class Person {
+    constructor(executor) {
+      const resolve = () => {
+        this.callback;
+
+      }
+      const reject = () => {
+
+      }
+
+      executor(resolve, reject)
+    }
+
+    then(callback) {
+      this.callback = callback
+    }
+
+
+  }
+
+  const promise = new Promise((resolve, reject) => {
+    resolve("hahaha")
+  })
+
+  // 1.同一个Promise可以被多次调用then方法
+  // 当我们的resolve方法被回调时, 所有的then方法传入的回调函数都会被调用
+  promise.then(res => {
+    console.log("res1:", res)
+  })
+
+  promise.then(res => {
+    console.log("res2:", res)
+  })
+
+  promise.then(res => {
+    console.log("res3:", res)
+  })
+
+
+  // 2.then方法传入的 "回调函数: 可以有返回值
+// then方法本身也是有返回值的, 它的返回值是Promise
+
+
+// 1> 如果我们返回的是一个普通值(数值/字符串/普通对象/undefined), 那么这个普通的值被作为一个新的Promise的resolve值
+promise.then(res => {
+    return "aaaaa"
+  })
+
+
+  //以上代码相当于
+
+promise.then(res => {
+  return new Promise((resolve) => {
+    resolve("aaaaa")
+
+  })
+})
+
+//因此，接下来在then的话，对应的就是上一个then return的新的promise
+promise.then(res => {
+    return "aaaaa"
+  }).then(res => {
+    console.log("res:", res);
+    return "bbbbb"
+  })
+
+  //如果第一个return没有写ruturn， 默认返回的是undefined
+
+
+  promise.then(res => {
+    return undefined
+  }).then(res => {
+    console.log("res:", res);
+    return "bbbbb"
+  })
+
+// 2> 如果我们返回的是一个Promise
+
+promise.then(res => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(111111)
+    }, 3000)
+  })
+}).then(res => {
+  console.log("res", res);
+})
+
+/* 
+在这里看，是第一个then返回了一个promise
+其实是一个看不见的promise包裹着这里写着的promise
+
+return new Promise((resolve, reject) => {
+  resolve(
+     new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(111111)
+    }, 3000)
+  })
+  )
+})
+
+根据上一节内容，resolve里面有一个新的promise的话，
+当前的状态由新的promise决定，现在还是pending，直到新的promise调用了reslove或者reject
+所以三秒之后会转为fulfilled，然后执行最后的
+(res => {
+  console.log("res", res);
+})
+
+也就是3之后打印111111
+*/
+
+// 3> 如果返回的是一个对象, 并且该对象实现了thenable
+promise.then(res => {
+  return {
+    then: function(resolve, reject) {
+      resolve(222222)
+    }
+  }
+}).then(res => {
+  console.log("res:", res)
+})
+
+/* 
+promise.then(res => {
+  return {
+    new Promise(resolve, reject) => {
+      resolve(
+        then: function(resolve, reject) {
+        resolve(222222)
+    }
+      )
+    }
+  }
+}).then(res => {
+  console.log("res:", res)
+})
+
+
+根据上一节内容，resolve里面有一个对象, 并且这个对象有实现then方法(并且这个对象是实现了thenable接口),
+ 那么也会执行该then方法, 并且又该then方法决定后续状态
+
+ 打印结果是2222
+*/
+```
+
+## 15.6 Promise的对象方法catch
+
+
+
+```js
+ //const promise = new Promise((resolve, reject) => {
+  //  resolve('success')
+    //方法1：
+    //reject("rejected status")
+    //方法2：也会调用then的第二个参数（rejecte的回调函数）
+    //throw new Error("rejected status")
+//  })
+
+  // 1.当executor抛出异常时, 也是会调用错误(拒绝)捕获的回调函数的
+/*   promise.then(undefined, err => {
+    console.log("err:", err);
+  }) */
+
+//2.then的第一个参数是回调函数，第二个也是，看起来很容易出问题，阅读性比较不好，分开来比较好
+//通过catch方法来传入错误(拒绝)捕获的回调函数,是上面正规方法的语法糖
+//不符合promise/a+规范
+/* promise.catch(err => {
+  console.log("err:", err);
+}) */
+
+//下面的情况
+//这个catch是优先第一个promise的异常捕获，而不是return的新的promise
+//如果第一个promise没有异常的话，会留着给下一个用return的新的promise
+
+/* promise.then( res => {
+  console.log("res:", res);
+  return '11111'
+}).catch(err => {
+  console.log("err:", err);
+}) */
+//上面第一个promise是reject("rejected status")，因此会回调
+//catch里面的东西，
+
+
+/* 
+如果把第1个promise设置成resolve，看catch会不会捕获第二个promise
+
+*/
+/*   promise.then( res => {
+    console.log("res:", res);
+    return new Promise( (resolve, reject) => {
+      reject('the second promise err status')
+    })
+  }).catch( err => {
+    console.log("err:", err);
+  }) */
+
+/* 
+结果是回打印出来err: the second promise err status
+*/
+
+
+// 3.拒绝捕获的问题(前面课程)
+const promise = new Promise((resolve, reject) => {
+  reject("rejected status")
+})
+//单独写promise.catch的时候就会出现问题
+promise.then( res => {
+  console.log("res", res);
+})
+
+/* 如果没有写reject调用时候的处理，也就是回调函数，会报错 */
+/* promise.catch( err => {
+  console.log("err:", err);
+})
+
+所以要么按正规写法，then里面放两个回调函数，要么在then之后再调用
+catch
+ */
+
+
+ //4.catch方法的返回值
+ //事实上catch方法也是会返回一个Promise对象的，
+ //所以catch方法后面我们可以继续调用then方法或者catch方法：
+ //返回的值也是放在新的promise的resolve（）作为参数
+ //所以.catch{return }之后调用的一定是then
+ const promise = new Promise((resolve, reject) => {
+  reject("111111")
+})
+promise.then(res => {
+  console.log("res:", res)
+}).catch(err => {
+  console.log("err:", err)
+  return "catch return value"
+}).then(res => {
+  console.log("res result:", res)
+}).catch(err => {
+  console.log("err result:", err)
+})
+```
+
+## 15.7 **Promise的对象方法finally**
+
+* finally是在ES9（ES2018）中新增的一个特性：表示无论Promise对象无论变成fulfilled还是reject状态，最终都会
+
+被执行的代码。 
+
+* finally方法是不接收参数的，因为无论前面是fulfilled状态，还是reject状态，它都会执行。
+
+```js
+const promise = new Promise((resolve, reject) => {
+  // resolve("resolve message")
+  reject("reject message")
+})
+
+promise.then(res => {
+  console.log("res:", res)
+}).catch(err => {
+  console.log("err:", err)
+}).finally(() => {
+  console.log("finally code execute")
+})
+
+//err: reject message
+//finally code execute
+```
+
+## 15.8 Promise类方法resolve
+
+![alt](img/119.PNG)
+
+```js
+function foo(){
+  const obj = { name: "why" }
+  // 想把obj转成转成Promise对象，给别人返回出去
+  return new Promise((resolve) => {
+    resolve(obj)
+  })
+}
+var result = foo();
+result.then( res => {
+  console.log(res);
+})
+//{name: 'why'}
+//以上的代码我们可以通过Promise.resolve来实现
+
+
+// 类方法Promise.resolve
+// 1.普通的值
+ const promise = Promise.resolve({ name: "why" })
+
+// 相当于
+// const promise2 = new Promise((resolve, reject) => {
+//   resolve({ name: "why" })
+// })
+
+promise.then(res => {
+  console.log("res:", res)
+})
+
+// 2.传入Promise
+//和以前一样，旧的promise的状态由新的promise决定
+const promise1 = Promise.resolve(new Promise((resolve, reject) => {
+  resolve("11111")
+}))
+
+promise1.then(res => {
+  console.log("res:", res)
+})
+
+
+// 3.传入thenable对象
+```
+
+## 15.9 Promise类方法reject
+
+* reject方法类似于resolve方法，只是会将Promise对象的状态设置为reject状态。 
+
+* Promise.reject的用法相当于new Promise，只是会调用reject：
+
+```js
+
+// const promise = Promise.reject("rejected message")
+// 相当于
+// const promise2 = new Promsie((resolve, reject) => {
+//   reject("rejected message")
+// })
+
+// 注意: 无论传入什么值都是一样的
+const promise = Promise.reject(new Promise(() => {}))
+
+promise.then(res => {
+  console.log("res:", res)
+}).catch(err => {
+  console.log("err:", err)
+})
+//err: Promise {<pending>}
+```
+
+* Promise.reject传入的参数无论是什么形态，都会直接作为reject状态的参数传递到catch的
+
+## 15.10 Promise类方法all
+
+1. 它的作用是将多个Promise包裹在一起形成一个新的Promise； 
+
+2. 新的Promise状态由包裹的所有Promise共同决定：
+
+* 当所有的Promise状态变成fulfilled状态时，新的Promise状态为fulfilled，并且会将所有Promise的返回值 
+
+组成一个数组； 
+
+* 当有一个Promise状态为reject时，新的Promise状态为reject，并且会将第一个reject的返回值作为参数；
+
+```js
+// 创建多个Promise
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(11111)
+  }, 1000);
+})
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(22222)
+  }, 2000);
+})
+
+const p3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(33333)
+  }, 3000);
+})
+
+// 需求: 所有的Promise都变成fulfilled时, 再拿到结果
+
+Promise.all([p2, p1, p3, "aaaa"]).then(res => {
+  console.log(res)
+}).catch(err => {
+  console.log("err:", err)
+})
+//(4) [22222, 11111, 33333, 'aaaa']
+```
+
+```js
+// 创建多个Promise
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(11111)
+  }, 1000);
+})
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject(22222)
+  }, 2000);
+})
+
+const p3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(33333)
+  }, 3000);
+})
+
+// 意外: 在拿到所有结果之前, 有一个promise变成了rejected, 那么整个promise是rejected
+//不会再执行then里面的回调了，而是执行catch里面的回调函数
+Promise.all([p2, p1, p3, "aaaa"]).then(res => {
+  console.log(res)
+}).catch(err => {
+  console.log("err:", err)
+})
+//err: 22222
+```
+
+## 15.11 Promise类方法allSettled方法
+
+![alt](img/120.PNG)
+
+```js
+
+// 创建多个Promise
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(11111)
+  }, 1000);
+})
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject(22222)
+  }, 2000);
+})
+
+const p3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(33333)
+  }, 3000);
+})
+
+
+Promise.allSettled([p2, p1, p3]).then(res => {
+  console.log(res)
+}).catch(err => {
+  console.log("err:", err)
+})
+/* 
+(3) [{…}, {…}, {…}]
+0: {status: 'rejected', reason: 22222}
+1: {status: 'fulfilled', value: 11111}
+2: {status: 'fulfilled', value: 33333}
+length: 3
+[[Prototype]]: Array(0)
+*/
+```
+
+## 15.12 Promise类方法race
+
+如果有一个Promise有了结果，我们就希望决定最终新Promise的状态，那么可以使用race方法：
+
+race是竞技、竞赛的意思，表示多个Promise相互竞争，谁先有结果，那么就使用谁的结果；
+
+```js
+// 创建多个Promise
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(11111)
+  }, 1000);
+})
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(22222)
+  }, 2000);
+})
+
+const p3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(33333)
+  }, 3000);
+})
+
+// race: 竞技/竞赛
+// 只要有一个Promise变成fulfilled状态, 那么就结束
+
+Promise.race([p1, p2, p3]).then(res => {
+  console.log("res:", res)
+}).catch(err => {
+  console.log("err:", err)
+})
+//res: 11111
+
+```
+
+
+
+```js
+
+// 创建多个Promise
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(11111)
+  }, 4000);
+})
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject(22222)
+  }, 2000);
+})
+
+const p3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(33333)
+  }, 3000);
+})
+
+
+// 意外: 如果在所有的promise都还没有结果的情况下，有一个变成rejected了
+//就不会等其他结果，直接调用catch回调函数
+Promise.race([p1, p2, p3]).then(res => {
+  console.log("res:", res)
+}).catch(err => {
+  console.log("err:", err)
+})
+//err: 22222
+
+```
+
+
+
+## 15.13 Promise类方法any
+
+ any方法是ES12中新增的方法，和race方法是类似的：
+
+* any方法会等到一个fulfilled状态，才会决定新Promise的状态；
+
+* 如果所有的Promise都是reject的，那么也会等到所有的Promise都变成rejected状态；
+
+```js
+// 创建多个Promise
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(11111)
+
+  }, 1000);
+})
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject(22222)
+  }, 500);
+})
+
+const p3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(33333)
+
+  }, 3000);
+})
+
+// any方法
+//至少等到有一个结果是fulfilled
+Promise.any([p1, p2, p3]).then(res => {
+  console.log("res:", res)
+}).catch(err => {
+  console.log("err:", err.errors)
+})
+//res: 11111
+```
+
+如果所有的Promise都是reject的，那么会报一个AggregateError的错误。
+```js
+// 创建多个Promise
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject(11111)
+
+  }, 1000);
+})
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject(22222)
+  }, 500);
+})
+
+const p3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject(33333)
+  }, 3000);
+})
+
+// any方法
+//意外：所有都是rejected的话，会等到所有都执行完之后，最后再执行chatch的回调
+Promise.any([p1, p2, p3]).then(res => {
+  console.log("res:", res)
+}).catch(err => {
+  console.log("err:", err)
+})
+//err: AggregateError: All promises were rejected
+
+//console.log("err:", err.errors)的话，会返回传入的参数
+//err: (3) [11111, 22222, 33333]
+
+```
+
+
+
+# 16 手写Promise
+
+## 16.1 结构的设计
+
+```js
+const PROMISE_STATUS_PENDING = "pending";
+const PROMISE_STATUS_FULFILLED = "fulfilled";
+const PROMISE_STATUS_REJECTED = "rejected";
+
+class HYPromise {
+  constructor (executor) {
+    this.status = PROMISE_STATUS_PENDING;
+    this.value = undefined;
+    this.reason = undefined;
+    
+    const resolve = value => {
+      console.log(value);
+      setTimeout(() => {
+      this.status = PROMISE_STATUS_FULFILLED;
+      this.value = value;
+      this.onFulfilled(this.value)
+      }, 0)
+    }
+
+    const reject = reason => {
+      setTimeout(() => {
+      this.status = PROMISE_STATUS_REJECTED;
+      this.reason = reason;
+      this.onRejected(this.reason)
+      }, 0)
+
+    }
+
+    executor(resolve, reject);
+  }
+
+  then(onFulfilled, onRejected){
+    this.onFulfilled = onFulfilled;
+    this.onRejected = onRejected;
+
+  }
+}
+
+const hyPromise = new HYPromise((resolve, reject) => {
+  console.log('begin');
+  //resolve("111111")
+  reject("111111")
+  console.log('end');
+})
+
+hyPromise.then((res) => {
+  console.log("res", res);
+}, (err) => {
+  console.log("err", err);
+})
+
+```
+
+## 16.2 优化1
+
+1.当resolve执行之后，不再执行reject（）；
+
+2.当then方法 – 多次调用的时候，所有的回调函数执行
+
+```js
+  const PROMISE_STATUS_PENDING = "pending";
+  const PROMISE_STATUS_FULFILLED = "fulfilled";
+  const PROMISE_STATUS_REJECTED = "rejected";
+
+  class HYPromise {
+    constructor(executor) {
+      this.status = PROMISE_STATUS_PENDING;
+      this.value = undefined;
+      this.reason = undefined;
+      this.onFulfilledFns = [];
+      this.onRejectedFns = [];
+
+      const resolve = value => {
+        if (this.status === PROMISE_STATUS_PENDING) {
+          this.status = PROMISE_STATUS_FULFILLED;
+          setTimeout(() => {
+            this.value = value;
+            //   this.onFulfilled(this.value)
+            this.onFulfilledFns.forEach(fn => {
+              fn(this.value)
+            })
+          }, 0)
+
+        }
+
+      }
+
+      const reject = reason => {
+        if (this.status === PROMISE_STATUS_PENDING) {
+          this.status = PROMISE_STATUS_REJECTED;
+          setTimeout(() => {
+            this.reason = reason;
+            //    this.onRejected(this.reason)
+            this.onRejectedFns.forEach(fn => {
+              fn(this.reason);
+            })
+          }, 0)
+        }
+
+      }
+
+      executor(resolve, reject);
+    }
+
+    then(onFulfilled, onRejected) {
+      this.onFulfilledFns.push(onFulfilled);
+      this.onRejectedFns.push(onRejected);
+
+    }
+  }
+
+  const hyPromise = new HYPromise((resolve, reject) => {
+    console.log('begin');
+    resolve("111111")
+    reject("22222")
+    console.log('end');
+  })
+
+  hyPromise.then((res) => {
+    console.log("res1", res);
+  }, (err) => {
+    console.log("err1", err);
+  })
+
+  hyPromise.then((res) => {
+    console.log("res2", res);
+  }, (err) => {
+    console.log("err2", err);
+  })
+
+```
+
+## 16.3 优化2
+
+1.当then方法被settimeout包裹的时候，也要执行。
+
+```js
+  const PROMISE_STATUS_PENDING = "pending";
+  const PROMISE_STATUS_FULFILLED = "fulfilled";
+  const PROMISE_STATUS_REJECTED = "rejected";
+
+  class HYPromise {
+    constructor(executor) {
+      this.status = PROMISE_STATUS_PENDING;
+      this.value = undefined;
+      this.reason = undefined;
+      this.onFulfilledFns = [];
+      this.onRejectedFns = [];
+
+      /* 
+ 问题是 this.status = PROMISE_STATUS_FULFILLED;应该放在settimeout里面还是外面
+放到外面的话，没办法解决then被settimetout包裹的问题
+这时候，then里面的回调执行时候都是fulfilled
+这时候this.onFulfilledFns里面就只有不被包裹的，
+也就是只有2个函数
+没办法单独执行哪个包裹的then里面的回调
+
+如果放在里面的话，就不能解决
+resolve("111111")
+reject("22222")
+两个都执行的问题
+
+
+---》解决办法：放再里面，
+就是就算前面已经执行了resolve("111111")，
+也会进入reject函数去进行判断。
+
+ 
+*/
+      const resolve = value => {
+        setTimeout(() => {
+          if (this.status === PROMISE_STATUS_PENDING) {
+            this.status = PROMISE_STATUS_FULFILLED;
+            this.value = value;
+            console.log(this.onFulfilledFns);
+            this.onFulfilledFns.forEach(fn => {
+              fn(this.value)
+            })
+          }
+
+        }, 0)
+      }
+
+      const reject = reason => {
+        setTimeout(() => {
+          if (this.status === PROMISE_STATUS_PENDING) {
+            this.status = PROMISE_STATUS_REJECTED;
+            this.reason = reason;
+            this.onRejectedFns.forEach(fn => {
+              fn(this.reason);
+            })
+          }
+        }, 0)
+      }
+
+      executor(resolve, reject);
+    }
+
+    then(onFulfilled, onRejected) {
+      console.log(this.status);
+      //1.如果再then调用的时候，状态还没有确认下来pending
+      if (this.status === PROMISE_STATUS_PENDING) {
+      this.onFulfilledFns.push(onFulfilled);
+      this.onRejectedFns.push(onRejected);
+      }
+
+      if ( this.status === PROMISE_STATUS_FULFILLED && onFulfilled){
+        onFulfilled(this.value)
+      }
+        if(this.status === PROMISE_STATUS_REJECTED && onRejected){
+        onRejected(this.reason)
+      }
+
+    }
+  }
+
+  const hyPromise = new HYPromise((resolve, reject) => {
+    setTimeout( () => {
+    console.log('begin');
+    resolve("111111")
+    console.log('end');
+    }, 3000)
+  })
+
+
+    hyPromise.then((res) => {
+      console.log("res1", res);
+    }, (err) => {
+      console.log("err1", err);
+    })
+
+    hyPromise.then((res) => {
+      console.log("res2", res);
+    }, (err) => {
+      console.log("err2", err);
+    })
+
+    setTimeout( () => {
+      hyPromise.then((res) => {
+      console.log("res3", res);
+    }, (err) => {
+      console.log("err3", err);
+    })
+    }, 6000)
+
+```
+
+## 16.4 优化3
+
+1:then方法的链式调用
+
+then方法本身会返回一个promise
+
+1> 如果我们返回的是一个普通值(数值/字符串/普通对象/undefined), 那么这个普通的值被作为一个新的Promise的resolve值
+
+ 2>如果我们返回的是一个Promise, 这个Promise会再次被包裹
+
+
+
+
+
+# 异常处理
+
+## 1. 异常处理
+
+![alt](img/121.PNG)
+
+```js
+   /**
+ * 如果我们有一个函数, 在调用这个函数时, 如果出现了错误, 那么我们应该是去修复这个错误.
+ */
+
+function sum(num1, num2) {
+  // 当传入的参数的类型不正确时, 应该告知调用者一个错误
+  if (typeof num1 !== "number" || typeof num2 !== "number") {
+    // return undefined
+    throw "parameters is error type~"
+  }
+
+  return num1 + num2
+}
+
+// 调用者(如果没有对错误进行处理, 那么程序会因为throw直接终止，后续代码不会继续执行，但是return undefined会继续执行)
+ console.log(sum({ name: "why" }, true))
+console.log(sum(20, 30))
+
+console.log("后续的代码会继续运行~")
+```
+
+
+
+## 2. throw关键字
+
+![alt](img/122.PNG)
+
+
+
+## 3. error类型
+
+![alt](img/123.PNG)
+
+```js
+ // class HYError {
+//   constructor(errorCode, errorMessage) {
+//     this.errorCode = errorCode
+//     this.errorMessage = errorMessage
+//   }
+// }
+
+function foo(type) {
+  console.log("foo函数开始执行")
+
+  if (type === 0) {
+    // 1.抛出一个字符串类型(基本的数据类型)
+    // throw "error"
+    // throw 100
+
+    // 2.比较常见的是抛出一个对象类型
+    // throw { errorCode: -1001, errorMessage: "type不能为0~" }
+
+    // 3.创建类, 并且创建这个类对应的对象
+    // throw new HYError(-1001, "type不能为0~")
+
+    // 4.不用自己创建一个类，js提供了一个类Error
+    // throw new Error("我是error")
+    //会打印函数的调用栈
+
+    //可以直接打印出对象里面详细内容
+    // const err = new Error("type不能为0")
+    // console,log(err.message)
+    // console,log(err.name)
+    // console,log(err.stack) 打印函数的调用栈
+    //也可以自己重新赋值，开发里面不会自己手动修改
+    // err.name = "why"
+    // err.stack = "aaaa"
+
+    // throw err
+
+    // 5.Error的子类 常用于类型错误
+    const err = new TypeError("当前type类型是错误的~")
+
+    throw err
+
+    // 强调: 如果函数中已经抛出了异常, 那么后续的代码都不会继续执行了
+    console.log("foo函数后续的代码")
+  }
+
+  console.log("foo函数结束执行")
+}
+
+foo(0)
+
+console.log("后续的代码继续执行~")
+
+
+// function test() {
+//   console.log("test")
+// }
+
+// function demo() {
+//   test()
+// }
+
+// function bar() {
+//   demo()
+// }
+
+// bar()
+
+//test出现问题的话，会打印它是哪里调用的，他是demo里面调用的，demo是bar里面调用的，bar是全局调用的
+//跟踪当前函数是怎么一步一步被调用的
+
+```
+
+
+
+## 4. 异常的处理
+
+![alt](img/124.PNG)
+
+异常处理有两种方式，一种是不处理，一种是处理(try catch)
+
+```js
+   function foo(type){
+      if (type === 0) {
+        throw new Error("foo error messsage")
+      }
+    }
+
+    function bar(){
+      console.log("bar 开始");
+      foo(0);
+      console.log("bar结束");
+    }
+
+    function test(){
+      console.log("test 开始");
+      bar();
+      console.log("test 结束");
+    }
+
+    function demo(){
+      console.log("demo 开始");
+      test();
+      console.log("demo 结束");
+    }
+
+    demo()
+    /* 
+    
+    demo 开始
+    test 开始
+    bar 开始
+test3.html:16 Uncaught Error: foo error messsage
+    */
+
+    /* 
+    // 1.第一种是不处理, 异常会一层一层直接抛出去，知道最顶层的调用
+    如果在最顶层也没有对这个异常进行处理，那么我们的程序就会终止执行，并且报错
+
+    
+    */
+
+    console.log("后续的代码执行~")
+```
+
+
+
+## 5. 异常的捕获
+
+![alt](img/125.PNG)
+
+```js
+ function foo(type){
+      console.log("foo 开始");
+      if (type === 0) {
+        throw new Error("foo error messsage")
+      }
+      console.log("foo 结束");
+    }
+/* 
+如果你觉得再哪里代码执行会发生错误，一般会在对应的地方写try catch
+后续代码依旧执行.
+会把异常赋值给catch里面的err里面
+*/
+    function bar(){
+      console.log("bar 开始");
+      try {
+        foo(0);
+        //foo(1);
+        console.log("后续代码运行");
+      } catch(err){//从es10开始，你如果不想使用err的话，可以把（err）省略掉
+        
+        console.log(err);
+        alert(err.message)
+
+      } finally{
+        console.log("无论出不出错，我都会执行");
+      }
+      console.log("bar结束");
+    }
+
+    function test(){
+      console.log("test 开始");
+      bar();
+      console.log("test 结束");
+    }
+
+    function demo(){
+      console.log("demo 开始");
+      test();
+      console.log("demo 结束");
+    }
+
+    demo()
+
+
+    console.log("后续的代码执行~")
+```
+
+
+
+# 模块化
+
+## 1.**什么是模块化？**
+
+![alt](img/126.PNG)
+
+
+
+## 2. 模块化的历史
+
+![alt](img/127.PNG)
+
+js是从es6才开始支持模块化。95年到15年。在es6之前，社区出现了很多模块化规范，amd，cmd很少看到，现在commonjs很常见。因为node支持commonjs。但是现在主要使用es module.
+
+
+
+## 3.没有模块化带来的问题
+
+![alt](img/128.PNG)
+
+1.最初没有模块化的狮虎解决命名冲突的问题
+
+立即执行函数，把要暴露的对象通过对象返回出去，需要使用的时候使用模块名。
+
+问题就是moduleA命名冲突，你叫moduleA， 我也叫moduleA。就有问题。
+
+而且还得记得每个module的名字。很不好。
+
+```js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <script src="./why/index.js"></script>
+  <script src="./kobe/index.js"></script>
+  <script src="./why/why.js"></script>
+</body>
+</html>
+```
+
+why folder index.js
+
+```js
+var moduleA = (function() {
+  var name = "why"
+  var age = 18
+  var isFlag = true
+
+  return {
+    name: name,
+    isFlag: isFlag
+  }
+})()
+
+```
+
+why folder why.js
+
+```js
+(function() {
+  if (moduleA.isFlag) {
+    console.log("我的名字是" + moduleA.name)
+  }
+})()
+```
+
+kobe folder index.js
+
+```js
+var moduleB = (function() {
+  var name = "why"
+  var isFlag = false
+
+  return {
+    name: name,
+    isFlag: isFlag
+  }
+})()
+
+```
+
+
+
+## 4. CommonJS和Node的关系
+
+![alt](img/129.PNG)
+
+在node里面，每一个js文件就是一个模块，每一个模块都有自己独立的空间，一个文件是不能随便访问另一个文件里面的东西的。需要导出和导入
+
+## 5. CommonJs的导出module.exports
+
+ 1.导出方案 module.exports
+
+module是这个模块本身的一个对象，这个对象有个属性叫做exports，它也是一个对象。
+
+把东西放到exports里面，这个东西就可以导出了。
+
+why.js
+
+```js
+const name = "why"
+const age = 18
+
+function sum(num1, num2) {
+  return num1 + num2
+}
+
+// 1.导出方案 module.exports
+module.exports = {
+  // aaa: "hahahahaah",
+  // bbb: "bbb"
+  name,
+  age,
+  sum
+}
+```
+
+导入的东西就是导出的这个对象module.exports
+
+main.js
+
+```js
+// 使用另外一个模块导出的对象, 那么就要进行导入 require
+// const { aaa, bbb } = require("./why.js")
+const { name, age, sum } = require("./why.js")
+
+// console.log(aaa)
+// console.log(bbb)
+
+console.log(name)
+console.log(age)
+console.log(sum(20, 30))
+```
+
+当把一个对象（比如地址是ox100）赋值给module.exports的时候，这个对象就会被我从这个模块暴露出去，
+
+```js
+function require(id){
+
+requre module.exposts
+
+}
+const result = require("./why.js")// 意味着result = module.exposts
+//result和module.exposts是相同的东西
+所以result和module.exposts是指向相同的东西
+
+```
+
+![alt](img/130.PNG)
+
+这个时候info，module.exports, why 都指向ox100这个对象， 这三个是同一个对象
+
+## 6. CommonJs的导出exports
+
+最终能导出的一定是module.exports!!
+
+```js
+// 源码
+// module.exports = {}
+// exports = module.exports
+
+// 第二种导出方式
+// exports.name = name
+// exports.age = age
+// exports.sum = sum
+
+// 这种代码不会进行导出
+// exports = {
+//   name,
+//   age,
+//   sum
+// }
+
+// 这种代码不会进行导出
+// exports.name = name
+// exports.age = age
+// exports.sum = sum
+
+module.exports = {
+
+}
+
+// 最终能导出的一定是module.exports
+```
+
+![alt](img/131.PNG)
+
+![alt](img/132.PNG)
+
+
 
